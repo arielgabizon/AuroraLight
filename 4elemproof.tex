@@ -121,14 +121,19 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \maketitle
  \mathchardef\mhyphen="2D
 
-\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
-\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
-\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
-\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+%\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+\newcommand{\G}{\ensuremath{{\mathbb G}}\xspace}
+\newcommand{\Gstar}{\ensuremath{{\mathbb G}^*}\xspace}
+
+%\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
 \newcommand{\grouppair}{\ensuremath{G^*}\xspace}
 
 \newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
 \newcommand{\F}{\ensuremath{\mathbb F}\xspace}
+\newcommand{\Fstar}{\ensuremath{\mathbb F^*}\xspace}
+
 \newcommand{\help}[1]{$#1$-helper\xspace}
 \newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
 \newcommand{\pair}[1]{$#1$-pair\xspace}
@@ -140,6 +145,9 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
 \newcommand{\players}{\ensuremath{[n]}\xspace}
 \newcommand{\adv}{\ensuremath{A}\xspace}
+\newcommand{\advprime}{\ensuremath{A'}\xspace}
+\newcommand{\extprime}{\ensuremath{E'}\xspace}
+
 \newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
 \newcommand{\pairvec}[1]{$#1$-vector\xspace}
 \newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
@@ -163,9 +171,9 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\rcptc}{random-coefficient subprotocol\xspace}
 \newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
 \newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
-
+\newcommand{\randadv}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
  \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
- \num\newco1mmand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
  \newcommand{\pr}{\mathrm{Pr}}
  \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
 \num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
@@ -179,10 +187,11 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
 \newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
 
-\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
-\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
+%\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+%\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
 
-\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
+\newcommand{\enc}[1]{\ensuremath{\left[#1\right]}\xspace}
+%\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
 \newcommand{\GG}{\ensuremath{\mathbf{G^*}}\xspace}  % would have liked to call this G01 but problem with name
 \num\newcommand{\g0}{\ensuremath{\mathbf{g}}\xspace}
 \newcommand{\inst}{\ensuremath{\phi}\xspace}
@@ -218,8 +227,10 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
 \newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
 \newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
-% \begin{abstract}
-% \end{abstract}
+\begin{abstract}
+We investigate how efficient a SNARK can be when using only a ``linear'' knowledge assumption rather than a quadratic one.
+We present a simple lemma to ``batch'' knowledge checks that allows us to batch 4 elements of the Pinocchio proof system into one. As a result we get a proofs with 5 group elements under very similar assumptions to \cite{PHGR}.
+\end{abstract}
 
 \section{Introduction}
 The most efficient known proving systems with succinct proofs rely on very strong cyrptographic assumptions, sometimes called non-falsifiable. This was shown to be necessary. However, one would naturally want to minimize the strength of the assumptions made. The most efficient known proving system, requiring only three group element proofs was designed by Groth \cite{Groth16}. It's security is proven in the ``Generic Group Model'' in which all used non-falsifiable assumptions hold. The model implies, at least when the CRS elements are of low degree, that all the malicious prover can do is take a non-adaptive linear combination of the key elements.
@@ -247,6 +258,7 @@ is \neg.
 Typically the PKE assumption is defined with auxiliary information rather than a randomized circuit.
 Our definition is weaker since it roughly corresponds to imposing the auxiliary information to be uniform,
 and sufficed for the security proofs of \cite{GGPR,PHGR}.
+\end{remark}
 \subsection{Description of our SNARK}\label{subsec:SNARK}
 We assume familiary of quadratic arithmetic programs.
 See e.g., Section 2.3 in \cite{groth16} for definitions.
@@ -257,14 +269,14 @@ where $A_i,B_i,C_i\in \F[X]$ have degree at most\footnote{\cite{BCTV} define $A_
 
 
 \begin{dfn}[$d$-Linear Knowledge of Exponent Assumption ($d$-LKE)]\label{dfn:koeassumption}
-Fix any efficient randomized circuit $C:\grouppair \to \G1^{t_1}\times \G2^{t_2}$ whose input is $g\in\grouppair$, and whose output consists of \G1 and \G2 elements, and a subset $S$ of size $d$ of $[t_1]$.
+Fix any efficient randomized circuit $C:\Gstar \to \G^{t}$ and a subset $S$ of size $d$ of $[t]$.
 For any efficient \adv there exists an efficient \ext such that the following holds.
 Consider the following experiment.
- $\alpha\in \F^*$ and $g\in \grouppair$ are chosen uniformly.
+ $\alpha\in \F^*$ and $g\in \G$ are chosen uniformly.
  Denote $T\defeq \sett{C(g)_i}{i\in S}$
  \adv is given as input $C(g)$ and $\sett{\alpha\cdot x }{x\in T}$
- and outputs a pair of the form $(a,b)$ in $\G11$, which he ``hopes'' is of the form $(c,\alpha c)$.
-   \ext, given the same input, outputs  
+ and outputs a pair of the form $(a,b)$ in $\Gstar$, which he ``hopes'' is of the form $(c,\alpha c)$.
+   \ext, given the same input and the randomness of \adv, outputs  
  $a_1,\ldots,a_d \in \F$ such that the probability that both
    
  \begin{enumerate}
@@ -272,22 +284,22 @@ Consider the following experiment.
   \item \ext ``failed'', i.e., $a \neq (\sum_{i=1}^d a_i \tau^i)\cdot g_1$.
    \end{enumerate}
 is \neg.
- The same holds when \G11 is replaced by \G21 and $g_1$ is replaced by $g_2$.
 \end{dfn}
 
 
 We show that the $d$-LKE can be used to ``batch'' knowledge checks.
 
 \begin{lemma}\label{lem:batchLKE}
-Fix any efficient randomized circuit $C:\grouppair \to \G1^{t_1}\times \G2^{t_2}$ whose input is $g\in\grouppair$, and whose output consists of \G1 and \G2 elements, and $k$ subsets $S_1,\ldots,S_k$ of size at most $d$ of $[t_1]\cup [t_2]$.
+Assuming the $d$-LKE the following holds.
+Fix any efficient randomized circuit $C:\G \to \G^{t}$ and $k$ subsets $S_1,\ldots,S_k$ of size at most $d$ of $[t]$.
 Fix any $i\in [k]$.
 For any efficient \adv there exists an efficient \ext such that the following holds.
 Consider the following experiment.
  $\alpha_1,\ldots\alpha_k\in \F^*$ and $g\in \grouppair$ are chosen uniformly.
  Denote $T_j\defeq \sett{C(g)_i}{i\in S_j}$
  \adv is given as input $C(g)$ and $\sett{\alpha\cdot x }{x\in T}$
- and outputs for some $\ell \in [k]$, a set of elements  $(a_1,\ldots, a_k,b)$ in $\G11$.
-   \ext, given the same input, outputs  
+ and outputs for some $\ell \in [k]$, a set of elements  $(a_1,\ldots, a_k,b)$ in $\Gstar$.
+   \ext, given the same input as \adv together with the randomness of \adv and $\sett{\alpha_j}{j\in [k]\setminus\set{i}}$, outputs  
  $a_1,\ldots,a_d \in \F$ such that the probability that both
    
  \begin{enumerate}
@@ -295,263 +307,92 @@ Consider the following experiment.
   \item \ext ``failed'', i.e., $a_i \neq (\sum_{i=1}^d a_i \alpha_i)\cdot g_1$.
    \end{enumerate}
 is \neg.
- The same holds when \G11 is replaced by \G21 and $g_1$ is replaced by $g_2$.
 \end{lemma}
 \begin{proof}
+ Fix $C,\adv, S_1,\ldots,S_k$ and $i\in [k]$ as in the lemma statement. We aim to construct \ext satisfying the lemma statement. Consider the following efficient $\adv'$, that on input $C(g), T_i$ samples random \sett{\alpha_\ell\in \Fstar}{\ell\in [k]\setminus\set{i}}  computes $\sett{T_\ell}{\ell\in [k]\setminus\set{i}}$ and invokes \adv with
+ uniformly chosen randomness \randadv on $C(g),T_1,\ldots,T_k$.
+ When \adv returns $(a_1,\ldots,a_k,b)$, \advprime returns $(a_i,b')$ where
+ \[b' = b-\enc{\sum_\ell \alpha_\ell\cdot a_\ell}.\]
+ Note that \adv succeeds exactly when \advprime succeeds in the sense that
+ given any value of $C(g),\set{\alpha_\ell},\randadv$,
+ \[\sum_\ell \alpha_\ell a_\ell  = b \leftrightarrow \alpha_i a_i = b'\]
+ Let \extprime be the extractor guaranteed to exist for $\advprime,C,T_i$ from the $d$-LKE.
+ Note that the input for \extprime is $C(g),T_i$ together with the inner randomness of \advprime which is 
+ $\randadv,\sett{\alpha_\ell}{\ell\in [k]\setminus\set{i}}$.
  
+ Now define \ext to be the (identical) extractor that given 
+ $(C(g),T_i,\randadv,\sett{\alpha_\ell}{\ell\in [k] \setminus\set{i}}$.
+ simply returns the output $c_1,\ldots,c_d$ of \extprime on the same input.
 \end{proof}
 
 
 
 We proceed to describe our proving system.
-We assume we are already given a description of the groups $\G1,\G2,\Gt$, the pairing $e$, and uniformly chosen generators 
-$g_1\in \G1,g_2\in \G2$, and these are all public.
+We assume we are already given a description of the groups $\G,\Gt$, the pairing $e$, and a uniformly chosen generator 
+$g\in \G$, and these are all public.
 \paragraph{\underline{Key Generation:}}
 
 \begin{enumerate}
  \item Sample random $\tau,\alpha_A,\alpha_B,\alpha_C,\gamma,\beta\in \F^*$
- \item For $i\in [0..d]$ output $\pk_{H,i}\defeq \enc1{\rho_A\rho_B \tau^i\cdot Z(\tau)}$
-\item For $i\in [0..d]$ output $\pk'_{H,i}\defeq \enc1{\alpha_C \rho_A\rho_B \tau^i\cdot Z(\tau)}$
+ \item For $i\in [0..d]$ output $\pk_{H,i}\defeq \enc{\rho_A\rho_B \tau^i\cdot Z(\tau)}$
+\item For $i\in [0..d]$ output $\pk'_{H,i}\defeq \enc{\alpha_C \rho_A\rho_B \tau^i\cdot Z(\tau)}$
  \item For $i\in [0..m]$ output
  
  \begin{enumerate}
-  \item $\pk_{A,i}\defeq \enc1{\rho_A A_i(\tau)}$
+  \item $\pk_{A,i}\defeq \enc{\rho_A A_i(\tau)}$
   
-\item $\pk_{B,i}\defeq\enc2{\rho_B B_i(\tau)}$,
-\item $\pk_{C,i}\defeq \enc1{\rho_A\rho_B C_i(\tau)}$,
+\item $\pk_{B,i}\defeq\enc{\rho_B B_i(\tau)}$,
+\item $\pk_{C,i}\defeq \enc{\rho_A\rho_B C_i(\tau)}$,
 
 \end{enumerate}
  \item For $i\in [n+1..m]$ output
 \begin{enumerate}
-\item  $\pk'_{A,i}\defeq\enc1{\alpha_A\rho_A A_i(\tau)}$,
-\item $\pk'_{B,i}\defeq \enc1{\alpha_B\rho_B B_i(\tau)}$,
-\item $\pk'_{C,i}\defeq \enc1{\alpha_C \rho_A\rho_B C_i(\tau)}$
-\item $\pk_{K,i}\defeq \enc1{\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
+\item  $\pk'_{A,i}\defeq\enc{\alpha_A\rho_A A_i(\tau)}$,
+\item $\pk'_{B,i}\defeq \enc{\alpha_B\rho_B B_i(\tau)}$,
+\item $\pk'_{C,i}\defeq \enc{\alpha_C \rho_A\rho_B C_i(\tau)}$
+\item $\pk_{K,i}\defeq \enc{\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
 
-% \item $\pk_{K,i}\defeq \enc1{\alpha_A\rho_A A_i(\tau)+\alpha_B\rho_B B_i(\tau)+\alpha_C \rho_A\rho_B C_i(\tau)+ \beta (\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
+% \item $\pk_{K,i}\defeq \enc{\alpha_A\rho_A A_i(\tau)+\alpha_B\rho_B B_i(\tau)+\alpha_C \rho_A\rho_B C_i(\tau)+ \beta (\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
 
 \end{enumerate}
 
 
 
-\item Output the additional verification key elements $(\enc2{\alpha_A},\enc1{\alpha_B},\enc2{\alpha_C},\enc2{\gamma},\enc1{\beta\gamma},\enc2{\beta\gamma},\enc2{\rho_A\rho_B Z(\tau)})$
+\item Output the additional verification key elements $(\enc{\alpha_A},\enc{\alpha_B},\enc{\alpha_C},\enc{\gamma},\enc{\beta\gamma},\enc{\beta\gamma},\enc{\rho_A\rho_B Z(\tau)})$
  \end{enumerate}
 
-\newcommand{\Amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
 \paragraph{\underline{prover:}\\}
 The prover has in his hand a QAP solution $(x_0=1,x_1,\ldots,x_m)$ that coincides with the public input $x=(x_1,\ldots,x_n)$ and satisfies the following:
 If we define $A\defeq \sum_{i=0}^m x_i\cdot A_i, B\defeq \sum_{i=0}^m x_i \cdot B_i,$ and $C\defeq \sum_{i=0}^m x_i \cdot C_i$;
-then the polynomial $P\defeq A\cdot B - C$ will be divisble by the target polynomial $Z$, and \per can compute the polynomial $H$ of degree at most $d$ with $P=H\cdot Z$. Let $\amid\defeq A -\sum_{i=0}^n x_i\cdot A_i$; define \bmid and \cmid analogously.
+then the polynomial $P\defeq A\cdot B - C$ will be divisble by the target polynomial $Z$, and \per can compute the polynomial $H$ of degree at most $d$ with $P=H\cdot Z$. Let $\amid\defeq A -\sum_{i=0}^n x_i\cdot A_i$; define \midb and \midc analogously.
 
 Given the proving key, \per computes as linear combinations of the proving key elements
 \begin{enumerate}
-\item $\pi_A\defeq \enc1{\rho_A \amid(\tau)}$, $\pi'_A\defeq \enc1{\alpha_A\rho_A \amid(\tau)}$.
-\item $\pi_B\defeq \enc2{\rho_B \bmid(\tau)}$, $\pi'_B \defeq \enc1{\alpha_B\rho_B \bmid(\tau)}$.
-\item $\pi_C\defeq \enc1{\rho_A\rho_B \cmid(\tau)}$, $\pi'_C \defeq \enc1{\alpha_C\rho_A\rho_B \cmid(\tau)}$.
+\item $\pi_A\defeq \enc{\rho_A \amid(\tau)}$, $\pi'_A\defeq \enc{\alpha_A\rho_A \amid(\tau)}$.
+\item $\pi_B\defeq \enc{\rho_B \midb(\tau)}$, $\pi'_B \defeq \enc{\alpha_B\rho_B \midb(\tau)}$.
+\item $\pi_C\defeq \enc{\rho_A\rho_B \midc(\tau)}$, $\pi'_C \defeq \enc{\alpha_C\rho_A\rho_B \midc(\tau)}$.
 
-\item $\pi_K\defeq \enc1{\beta(\rho_A A(\tau) + \rho_B B(\tau) + \rho_A\rho_B C(\tau))}$.
-\item $\pi_H\defeq \enc1{H(\tau}$.
-\item $\pi_K\defeq \enc1{\alpha_A \rho_A\Amid(\tau) + \alpha_B \rho_B\Bmid(\tau) + \alpha_C\rho_A\rho_B(\Cmid(\tau)+ Z(\tau)H(\tau))+ \beta(\rho_A\Amid(\tau)+\rho_B\Bmid(\tau) + \rho_A\rho_B\Cmid(\tau))}$.
+\item $\pi_K\defeq \enc{\beta(\rho_A A(\tau) + \rho_B B(\tau) + \rho_A\rho_B C(\tau))}$.
+\item $\pi_H\defeq \enc{H(\tau}$.
+\item $\pi_K\defeq [\alpha_A \rho_A\mida(\tau) + \alpha_B \rho_B\midb(\tau) + \alpha_C\rho_A\rho_B(\midc(\tau)+ Z(\tau)H(\tau))$
+$+ \beta(\rho_A\mida(\tau)+\rho_B\midb(\tau) + \rho_A\rho_B\midc(\tau))]$.
 \end{enumerate}
  and outputs $\prf = (\pi_A,\pi_B,\pi_C,\pi_K)$,
  
 
 \paragraph{\underline{\bctv verifier:}\\}
 Denote the ``public input component'' 
-\[ \PI(x) \defeq \pk_{A,0} + \sum_{i=1}^n x_i \pk_{A,i} = \enc1{\rho_A A_0(\tau) + \sum_{i=1}^n x_i \rho_A A_i(\tau) }\]
+\[ \PI(x) \defeq \pk_{A,0} + \sum_{i=1}^n x_i \pk_{A,i} = \enc{\rho_A A_0(\tau) + \sum_{i=1}^n x_i \rho_A A_i(\tau) }\]
 %  For an element $a$ of \G1 (\G2) denote by \dl{a} the discrete log of $a$ w.r.t $g_1(g_2)$.
  The verifier, using pairings and the verification key, checks the following.
 \begin{enumerate}
- \item $e(\pi'_A,g_2)=e(\pi_A,\enc2{\alpha_A})$.
-\item $e(\pi'_B, g_2)=e(\enc1{\alpha_B},\pi_B)$.
-\item $e(\pi'_C,g_2)=e(\pi_C,\enc2{\alpha_C})$.
-\item $e(\pi_K,\enc2{\gamma})=e(\PI(x)+\pi_A+\pi_C,\enc2{\beta\gamma})\cdot e(\enc1{\beta\gamma},\pi_B)$.
-\item $e(\PI(x)+\pi_A,\pi_B)= e(\pi_C,g_2)\cdot e(\pi_H,\enc2{Z(\tau)\rho_A\rho_B})$.
- \end{enumerate}
- 
- \section{Attack Description}\label{sec:attack}
- Note that the elements \sett{\pk'_{A,i}}{i\in [0..n]} are not used at all by the verifier and honest prover, and thus could have been omitted from the key. We show that these elements allow a malicious prover to replace the public input arbitrarily when starting from a valid proof.
- Loosely speaking, we do this by adding a factor to $\pi_A$ that ``switches'' the public input the proof is arguing about.
- The first verifier check -- the ``knowledge check'' for $\pi_A$ -- should catch this, but the redundant elements allow the malicious prover to add
- the analogous factor to $\pi'_A$ and pass the check. Details follow.
- 
- 
- Suppose we are given a valid proof $\prf = (\pi_A,\pi_B,\pi_C,\pi'_A,\pi'_B,\pi'_C,\pi_H,\pi_K)$
- for a public input $x=(x_1,\ldots,x_n)\in \F^{n}$.
- Choose any $x'=(x'_1,\ldots,x'_n)\in \F^n$.
-
- Set 
- \[\eta_A\defeq \pi_A + \sum_{i=1}^n (x_i-x'_i)\pk_{A,i}\]
- \[\eta'_A\defeq \pi'_A + \sum_{i=1}^n (x_i-x'_i) \pk'_{A,i}\]
- 
- We claim that $\prf^* \defeq (\eta_A,\pi_B,\pi_C,\eta'_A,\pi'_B,\pi'_C,\pi_K,\pi_H)$ is a valid proof for
- public input $x'$.
- 
- The verifier checks with public input $x'$ and proof $\prf^*$ are
-\begin{enumerate}
- \item $e(\eta'_A,g_2)=e(\eta_A,\enc2{\alpha_A})$.
-\item $e(\pi'_B, g_2)=e(\enc1{\alpha_B},\pi_B)$.
-\item $e(\pi'_C,g_2)=e(\pi_C,\enc2{\alpha_C})$.
-\item $e(\pi_K,\enc2{\gamma})=e(\PI(x')+\eta_A+\pi_C,\enc2{\beta\gamma})\cdot e(\enc1{\beta\gamma},\pi_B)$.
-\item $e(\PI(x')+\eta_A,\pi_B)= e(\pi_C,g_2)\cdot e(\pi_H,\enc2{Z(\tau)\rho_A\rho_B})$.
+\item $e(\pi_K,g_2)= e(\pi_A,\enc{\alpha_A+\beta})\cdot e(\enc{\alpha_B+\beta},\pi_B)\cdot e(\pi_C,\enc{\alpha_C+\beta})\cdot$
+e()$.
+\item $e(\PI(x)+\pi_A,\PIb(x)\pi_B)= e(\PIc(x)+pi_C,g_2)$.
  \end{enumerate}
  
  
- We show that the five equations all hold.
- \begin{enumerate}
-  \item The check  $e(\eta'_A,g_2)=e(\eta_A,\enc2{\alpha_A})$;
-  this is where the redundant elements crucially come into play.
-  
-  
-  We have
-  \[\eta'_A = \pi'_A + \sum_{i=1}^n (x_i-x'_i) \pk'_{A,i}\]
- So
- \[e(\eta'_A,g_2) = \e(\pi'_A,g_2)\cdot e\left(\sum_{i=1}^n (x_i-x'_i) \pk'_{A,i},g_2\right)\]
- Since \prf is a valid proof, this is:
-  \[=e(\pi_A,\enc2{\alpha_A})\cdot e\left(\sum_{i=1}^n (x_i-x'_i) \pk'_{A,i},g_2\right)\]
-  Using $\pk'_{A,i} = \alpha_A\cdot \pk_{A,i}$ for every $i$,
-  \[=e(\pi_A,\enc2{\alpha_A})\cdot e\left(\alpha_A\cdot \left(\sum_{i=1}^n (x_i-x'_i) \pk_{A,i}\right),g_2\right)\]
-Using bi-linearity of the pairing:
- \[=e(\pi_A,\enc2{\alpha_A})\cdot e\left(\sum_{i=1}^n (x_i-x'_i) \pk_{A,i},\enc2{\alpha_A}\right)\]
-  \[=e\left(\pi_A+\sum_{i=1}^n (x_i-x'_i) \pk_{A,i},\enc2{\alpha_A}\right) = e(\eta_A,\enc2{\alpha_A}).\]
-  \item The second and third checks involve the unchanged $\pi_B,\pi'_B,\pi_C,\pi'_C$
-  and thus pass since \prf was valid.
-  \item The fourth and fifth equations are also identical in \prf and $\prf^*$.
-  The only difference is that the later replaces the term $\PI(x) + \pi_A$ 
-  with $\PI(x')+ \eta_A$. And 
-    \[\PI(x) + \pi_A = \pk_{A,0} + \sum_{i=1}^n x_i\pk_{A,i} + \pi_A = 
-  \pk_{A,0} + \sum_{i=1}^n x'_i\pk_{A,i} +  \sum_{i=1}^n (x_i-x'_i) \pk_{A,i}  + \pi_A =
-  \PI(x') + \eta_A.
-  \]
-
- \end{enumerate}
- 
- \renewcommand{\span}[1]{\ensuremath{\mathrm{Span}_{\F}(#1)}\xspace}
- \newcommand{\bctvprime}{\ensuremath{\bctv'}\xspace}
-\section{Security Proof in the Generic Group Model}\label{sec:ggmproof}
-Let us denote by \bctvprime the scheme identical to the one in \cite{BCTV} described in Subsection \ref{subsec:bctv},
-with two modifications:
-\begin{itemize}
- \item The elements $\sett{\pk_{A',i}}{i\in [0..n]}$ are excluded from the proving key.
- \item The scheme is only defined for QAPs where the polynomials \set{A_i} satisfy
-   \begin{enumerate}
-    \item The polynomials \sett{A_i}{i\in [0..n]} are linearly independent (this condition already appears in \cite{BCTV} at \cite{Parno15}'s suggestion).
-    \item $\span{\sett{A_i}{i\in[0..n]}}\cap \span{\sett{A_i}{i\in [n+1..m]}}=\set{0}$. \footnote{In conversation with Alessandro Chiesa and Madars Virza, we  learned that they were aware of the necessity of this condition, and it is satisfied by any QAP constructed in libsnark\cite{libsnark}. It also already appears in \cite{BGG}.}
-   \end{enumerate}
- \item We also assume, mainly as a convenience, that $Z\in \sett{C_i}{i\in [n+1..m]}$. This is always the case if we want zero-knowledge, and the \bctv construction adds $Z$ to $\set{A_i},\set{B_i},\set{C_i}$.
-\end{itemize}
-
-We show \bctvprime is knowledge sound in the generic group model.
-We will use the following simple linear algebra claim.
-\begin{claim}\label{clm:independence}
- Fix positive integers $n<m$. Let $v_0,\ldots,v_m$ be vectors in a vector space over \F such that
- \begin{enumerate}
-  \item $v_0,\ldots,v_n$ are linearly independent.
-  \item Defining $V = \span{v_0,\ldots,v_n}$ and $U=\span{v_{n+1},\ldots,v_m}$, we have $V\cap U =\set{0}$.
- \end{enumerate}
-Suppose we are given $(x_0,\ldots,x_m),(a_0,\ldots,a_m)\in \F^m$ such that $\sum_{i=0}^m x_i\cdot v_i = \sum_{i=0}^m a_i\cdot v_i$.
-Then $(x_0,\ldots,x_n) = (a_0,\ldots,a_n)$.
-\end{claim}
-\begin{proof}
- Since $\sum_{i=0}^m x_i\cdot v_i = \sum_{i=0}^m a_i\cdot v_i$,
- we have
- \[\sum_{i=0}^n (x_i-a_i) v_i = \sum_{i=n+1}^m (a_i-x_i)v_i\]
- The zero-intersection condition implies $\sum_{i=0}^n (x_i-a_i) v_i=0 $
- and the linear independence of $v_0,\ldots,v_n$ now implies
- $x_i-a_i=0$ for $i\in [0..n]$.
- 
-\end{proof}
-
-
-We proceed to prove knowledge soundness of \bctvprime in the generic group model.
-Following \cite{groth16} (see also Section 2 of \cite{BG18} for formal details), it suffices to show knowledge
-soundness of \bctvprime as a Non-Interactive Linear Proof (NILP). That is, 
-\begin{itemize}
-\item The CRS elements and proof elements are the field elements originally encoded in the group elements, rather than the group elements.
-\item The malicious prover must output, given only the public input $x\in\F^n$, $\prf = (\pi_A,\pi_B,\pi_C,\pi'_A,\pi'_B,\pi'_C,\pi_H,\pi_K)$ as linear combinations of the CRS elements, such that the verifier equations hold as a polynomial identity in 
-$\tau,\rho_A,\rho_B,\alpha_A,\alpha_B,\alpha_C,\gamma,\beta$ as formal variables.
-\item To prove knowledge soundness, it then suffices to efficiently derive from the coefficients of these linear combinations a QAP witness for $x$.
-\end{itemize}
-
-For \bctvprime, the NILP CRS is now the set of \emph{field elements}
-
-\begin{enumerate}
- \item For $i\in [0..d]$, $\tau^i$.
- \item For $i\in [0..m]$ 
- 
- \begin{enumerate}
-  \item $\rho_A A_i(\tau)$
-\item $\rho_B B_i(\tau)$
-\item $\alpha_B\rho_B B_i(\tau)$
-\item $\rho_A\rho_B C_i(\tau)$
-\item $\alpha_C \rho_A\rho_B C_i(\tau)$ 
-\item $\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))$ 
-\end{enumerate}
-\item For $i\in [n+1..m]$, $\alpha_A\rho_A A_i(\tau)$.
-
-\item $\alpha_A,\alpha_B,\alpha_C,\gamma,\beta\gamma,\rho_a\rho_b Z(\tau)$.
-\end{enumerate}
-
-and our verification equations are now:
-\begin{enumerate}
- \item $\pi'_A= \alpha_A\cdot \pi_A$.
-\item $\pi'_B=\alpha_B\cdot \pi_B$.
-\item $\pi'_C=\alpha_C\cdot \pi_C$.
-\item $\gamma\cdot \pi_K =\beta\gamma\cdot (\PI(x)+\pi_A+\pi_B+\pi_C)$.
-\item $(\PI(x)+\pi_A)\cdot \pi_B= \pi_C + \pi_H\cdot Z(\tau)\rho_A\rho_B$,
- \end{enumerate}
-where
-\[\PI(x)\defeq \rho_A A_0(\tau) + \sum_{i=1}^n x_i\cdot \rho_A A_i(\tau) .\]
- 
-Suppose now a prover has indeed output a valid proof $\prf = (\pi_A,\pi_B,\pi_C,\pi'_A,\pi'_B,\pi'_C,\pi_H,\pi_K)$
-as linear combinations of the CRS elements, such that the verifier equations hold as polynomial identities.
-We show how to derive a QAP witness for $x$ from the coefficients of these linear combinations. 
-It will be convenient here to think of the proof elements as polynomials only in $\rho_A,\rho_B,\alpha_A,\alpha_B,\alpha_C,\beta,\gamma$ over the ring $\F[\tau]$; i.e. think of the coefficients of these polynomials (not to be confused with the coefficients of the linear combinations of CRS elements) as polynomials in $\tau$.
- 
-
-The first equation implies that the linear combination for $\pi'_A$ only has non-zero coefficients for elements with an $\alpha_A$ component, i.e.
-\[\pi'_A = \sum_{i=n+1}^m a_i\cdot  \alpha_A\rho_A A_i(\tau) + a^*\cdot \alpha_A \]
-for some $a_{n+1},\ldots,a_m,a^* \in \F$.
-Which implies 
-\[\pi_A = \sum_{i=n+1}^m a_i \cdot \rho_A A_i(\tau) + a^*\]
-From the second and third checks, we can similarly conclude:
-\[\pi_B = \sum_{i=0}^m b_i\cdot  \rho_B B_i(\tau) + b^*\]
-
-\[\pi_C = \sum_{i=0}^m c_i \cdot \rho_A\rho_B C_i(\tau) + c^*\]
-Similarly, the fourth equation tells us that $\pi_K$ must only use with non-zero coefficient elements with a $\beta$ factor,
-i.e. the elements $\set{\gamma\beta,\sett{\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}{i\in[0..m]}}$.
-Hence we can write
-\[\pi_K = \sum_{i=0}^m k_i\cdot\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau)) + k^*\cdot \gamma\beta\]
-
-and therefore
-\begin{equation}\label{eqn:pik}
-\PI(x)+\pi_A +\pi_B+\pi_C= \sum_{i=0}^m k_i\cdot(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau)) + k^*\cdot \gamma.
-\end{equation}
-
-Looking at the $\rho_A$ coefficient on both sides of (\ref{eqn:pik}), we have
-\[\sum_{i=0}^n x_i \cdot \rho_A A_i(\tau)+\sum_{i=n+1}^m a_i \cdot \rho_A A_i(\tau) = \sum_{i=0}^m k_i\cdot \rho_A A_i(\tau),\]
-and so
-\[\sum_{i=0}^n x_i \cdot A_i(\tau)+\sum_{i=n+1}^m a_i \cdot A_i(\tau) = \sum_{i=0}^m k_i \cdot A_i(\tau).\]
-
-Invoking Claim \ref{clm:independence}, this implies $k_i=x_i$ for $i\in[0..n]$.
-Since the coefficients of $\rho_B,\rho_A\rho_B$ must also match, we have
-\[\sum_{i=0}^m b_i\cdot  \rho_B B_i(\tau)= \sum_{i=0}^m k_i \cdot \rho_B B_i(\tau),\sum_{i=0}^m c_i \cdot \rho_A\rho_B C_i(\tau)=\sum_{i=0}^m k_i \cdot\rho_A\rho_B C_i(\tau) \]
-So
-\[\PI(x)+\pi_A=\sum_{i=0}^m k_i\cdot \rho_A A_i(\tau)+a^*,\pi_B=\sum_{i=0}^m k_i \cdot \rho_B B_i(\tau)+b^*,\pi_C=\sum_{i=0}^m k_i \cdot \rho_A\rho_B C_i(\tau)+c^*\]
-
-
-Now invoking the fifth equation we have
-\begin{equation}\label{eqn:pih}
-(\PI(x)+\pi_A)\cdot \pi_B= \pi_C + \pi_H\cdot Z(\tau)\rho_A\rho_B. 
-\end{equation}
-
-
-Denote by $H(\tau)$ the degree at most $d$ polynomial which is the part of $\pi_H$ involving the terms
-\sett{\tau_i}{i\in [0..d]} (inspection shows in fact $\pi_H=H(\tau)$, but this is not crucial for us).
-The $\rho_A\rho_B$ coefficient of each side in (\ref{eqn:pih}), giving
-\[\left(\sum_{i=0}^m k_i \cdot A_i(\tau)\right)\left(\sum_{i=0}^m k_i\cdot  B_i(\tau)\right) = \sum_{i=0}^m k_i\cdot C_i(\tau) + H(\tau)Z(\tau)\]
-Since $k_i=x_i$ for $i\in [0..n]$, this means $k_{n+1},\ldots,k_m$ is a QAP witness for public input $x$.
-
 \section*{Acknowledgements}
 We thank Sean Bowe for useful discussions and a review of this note.
 \bibliographystyle{alpha}
