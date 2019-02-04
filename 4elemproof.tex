@@ -147,13 +147,15 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\adv}{\ensuremath{A}\xspace}
 \newcommand{\advprime}{\ensuremath{A'}\xspace}
 \newcommand{\extprime}{\ensuremath{E'}\xspace}
+\newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
 
 \newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
 \newcommand{\pairvec}[1]{$#1$-vector\xspace}
 \newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
 \newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
 \newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
-
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
 \newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
 
 \newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
@@ -186,7 +188,7 @@ On the size of pairing based proofs under Knowledge of Exponent}
 \newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
 \newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
 \newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
-
+\newcommand{\trapdoor}{\ensuremath{r}}
 %\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
 %\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
 
@@ -225,7 +227,9 @@ On the size of pairing based proofs under Knowledge of Exponent}
  \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
  \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
 \newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
-\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI_A}}\xspace}
+\newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
+\newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
 \newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
 \begin{abstract}
 We investigate how efficient a SNARK can be when using only a ``linear'' knowledge assumption rather than a quadratic one.
@@ -235,6 +239,9 @@ We present a simple lemma to ``batch'' knowledge checks that allows us to batch 
 \section{Introduction}
 The most efficient known proving systems with succinct proofs rely on very strong cyrptographic assumptions, sometimes called non-falsifiable. This was shown to be necessary. However, one would naturally want to minimize the strength of the assumptions made. The most efficient known proving system, requiring only three group element proofs was designed by Groth \cite{Groth16}. It's security is proven in the ``Generic Group Model'' in which all used non-falsifiable assumptions hold. The model implies, at least when the CRS elements are of low degree, that all the malicious prover can do is take a non-adaptive linear combination of the key elements.
 Previous proving systems \cite{GGPR, PHGR} relied on the \emph{d-power knowledge of exponent assumption:}
+
+
+\section{Knowledge assumptions}
 
 \begin{dfn}[$d$-Power Knowledge of Exponent Assumption ($d$-PKE)]\label{dfn:koeassumption}
 For any efficient \adv there exists an efficient \ext such that the following holds.
@@ -259,15 +266,11 @@ Typically the PKE assumption is defined with auxiliary information rather than a
 Our definition is weaker since it roughly corresponds to imposing the auxiliary information to be uniform,
 and sufficed for the security proofs of \cite{GGPR,PHGR}.
 \end{remark}
-\subsection{Description of our SNARK}\label{subsec:SNARK}
-We assume familiary of quadratic arithmetic programs.
-See e.g., Section 2.3 in \cite{groth16} for definitions.
-We use similar notation to \cite{BCTV}, denoting by $m$ the size of the QAP, $d$ the degree and $n$ the number of public inputs.
-More specifically, our QAP has the form \set{\sett{A_i(X),B_i(X),C_i(X)}{i\in [0..m]}, Z(X)}
-where $A_i,B_i,C_i\in \F[X]$ have degree at most\footnote{\cite{BCTV} define $A_i,B_i,C_i$ to be of degree strictly less than $d$, however since $Z$ needs to be later added to \set{A_i},\set{B_i},\set{C_i} for zero-knowledge, it is more convenient for us to allow degree at most $d$ and assume $Z$ is already included. Note that in terms of the set of satisfiable instances $x\in \F^n$ every degree $d$ QAP is equivalent to one where \set{A_i,B_i,C_i} have degree smaller than $d$ obtained by taking the original polynomials mod $Z$.} $d$, and $Z\in \F[X]$ has degree exactly $d$.
-
-
-
+The assumption roughly says the following: Suppose you've given me a bunch of group elements. Now you pick a uniform $\alpha$, and for some subset of these 
+elements, you've now also given me the element multiplied by $\alpha$. Suppose now I've generated a new pair of group elements of ratio $\alpha$; that is a pair
+\enc{c},\enc{\alpha\cdot c}. Then I must have constructed $c$ as a linear combination of the $\alpha$-knowledge elements.
+In the $d$-PKE the $\alpha$-knowledge elements are always of the form \set{\tau^i}
+A natural extension would be to allow them to be an arbitrary subset, which leads us to the $d$-LKE.
 \begin{dfn}[$d$-Linear Knowledge of Exponent Assumption ($d$-LKE)]\label{dfn:koeassumption}
 Fix any efficient randomized circuit $C:\Gstar \to \G^{t}$ and a subset $S$ of size $d$ of $[t]$.
 For any efficient \adv there exists an efficient \ext such that the following holds.
@@ -285,6 +288,7 @@ Consider the following experiment.
    \end{enumerate}
 is \neg.
 \end{dfn}
+
 
 
 We show that the $d$-LKE can be used to ``batch'' knowledge checks.
@@ -326,6 +330,33 @@ is \neg.
 \end{proof}
 
 
+\subsection{Description of our SNARK}\label{subsec:SNARK}
+We assume familiarity with quadratic arithmetic programs.
+See e.g., Section 2.3 in \cite{groth16} for definitions.
+We use similar notation to \cite{BCTV}, denoting by $m$ the size of the QAP, $d$ the degree and $n$ the number of public inputs.
+More specifically, our QAP has the form \set{\sett{A_i(X),B_i(X),C_i(X)}{i\in [0..m]}, Z(X)}
+where $A_i,B_i,C_i\in \F[X]$ have degree at most\footnote{\cite{BCTV} define $A_i,B_i,C_i$ to be of degree strictly less than $d$, however since $Z$ needs to be later added to \set{A_i},\set{B_i},\set{C_i} for zero-knowledge, it is more convenient for us to allow degree at most $d$ and assume $Z$ is already included. Note that in terms of the set of satisfiable instances $x\in \F^n$ every degree $d$ QAP is equivalent to one where \set{A_i,B_i,C_i} have degree smaller than $d$ obtained by taking the original polynomials mod $Z$.} $d$, and $Z\in \F[X]$ has degree exactly $d$.
+
+
+
+
+
+To simplify the proof we give an assumption that generalizes the $d$-SDH and $q$-PDH used in \cite{PHGR}, 
+that we call the $d$-SPAN assumption
+\begin{dfn}[d-SPAN]\label{dfn:spanassump}
+ Fix integer $d$, and an $\F$-subspace $V$ of $\F(X)$ consisting only of polynomials of degree at most $d$.
+ Let $B$ be a basis for $V$. Fix any efficient \adv, and consider the following game:
+ Uniform $\tau\in \F$ and $g\in \G$ are sampled, and \adv is given \sett{f(\tau)}{f\in B}. Then the probability that \adv 
+ outputs  $p,q\in \F(X)$ and $h\in \G$ such that
+ \begin{enumerate}
+  \item $\deg(p),\deg(q)\leq d$.
+  \item $p/q \notin V$.
+  \item $h= \enc{p(\tau)/q(\tau)}$
+ \end{enumerate}
+is \negl
+\end{dfn}
+
+
 
 We proceed to describe our proving system.
 We assume we are already given a description of the groups $\G,\Gt$, the pairing $e$, and a uniformly chosen generator 
@@ -334,7 +365,7 @@ $g\in \G$, and these are all public.
 
 \begin{enumerate}
  \item Sample random $\tau,\alpha_A,\alpha_B,\alpha_C,\gamma,\beta\in \F^*$
- \item For $i\in [0..d]$ output $\pk_{H,i}\defeq \enc{\rho_A\rho_B \tau^i\cdot Z(\tau)}$
+ \item For $i\in [0..d]$ ofutput $\pk_{H,i}\defeq \enc{\rho_A\rho_B \tau^i\cdot Z(\tau)}$
 \item For $i\in [0..d]$ output $\pk'_{H,i}\defeq \enc{\alpha_C \rho_A\rho_B \tau^i\cdot Z(\tau)}$
  \item For $i\in [0..m]$ output
  
@@ -356,45 +387,68 @@ $g\in \G$, and these are all public.
 
 \end{enumerate}
 
+\begin{remark}
+ In fact it suffices to give the \emph{sum} of the $i$'th elements, instead of four separate ones, for the knowledge elements.
+\end{remark}
 
 
 \item Output the additional verification key elements $(\enc{\alpha_A},\enc{\alpha_B},\enc{\alpha_C},\enc{\gamma},\enc{\beta\gamma},\enc{\beta\gamma},\enc{\rho_A\rho_B Z(\tau)})$
  \end{enumerate}
 
-\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
 \paragraph{\underline{prover:}\\}
 The prover has in his hand a QAP solution $(x_0=1,x_1,\ldots,x_m)$ that coincides with the public input $x=(x_1,\ldots,x_n)$ and satisfies the following:
 If we define $A\defeq \sum_{i=0}^m x_i\cdot A_i, B\defeq \sum_{i=0}^m x_i \cdot B_i,$ and $C\defeq \sum_{i=0}^m x_i \cdot C_i$;
 then the polynomial $P\defeq A\cdot B - C$ will be divisble by the target polynomial $Z$, and \per can compute the polynomial $H$ of degree at most $d$ with $P=H\cdot Z$. Let $\amid\defeq A -\sum_{i=0}^n x_i\cdot A_i$; define \midb and \midc analogously.
 
-Given the proving key, \per computes as linear combinations of the proving key elements
+Given the proving key, \per computes as linear combinations of the proving key elements $\enc{\pi_A},\enc{\pi_B},\enc{\pi_C},\enc{\pi_H},\enc{\pi_K}$ where 
 \begin{enumerate}
-\item $\pi_A\defeq \enc{\rho_A \amid(\tau)}$, $\pi'_A\defeq \enc{\alpha_A\rho_A \amid(\tau)}$.
-\item $\pi_B\defeq \enc{\rho_B \midb(\tau)}$, $\pi'_B \defeq \enc{\alpha_B\rho_B \midb(\tau)}$.
-\item $\pi_C\defeq \enc{\rho_A\rho_B \midc(\tau)}$, $\pi'_C \defeq \enc{\alpha_C\rho_A\rho_B \midc(\tau)}$.
-
-\item $\pi_K\defeq \enc{\beta(\rho_A A(\tau) + \rho_B B(\tau) + \rho_A\rho_B C(\tau))}$.
-\item $\pi_H\defeq \enc{H(\tau}$.
-\item $\pi_K\defeq [\alpha_A \rho_A\mida(\tau) + \alpha_B \rho_B\midb(\tau) + \alpha_C\rho_A\rho_B(\midc(\tau)+ Z(\tau)H(\tau))$
-$+ \beta(\rho_A\mida(\tau)+\rho_B\midb(\tau) + \rho_A\rho_B\midc(\tau))]$.
+\item $\pi_A\defeq \rho_A \amid(\tau)$ .
+\item $\pi_B\defeq \rho_B \midb(\tau)$.
+\item $\pi_C\defeq \rho_A\rho_B \midc(\tau)$.
+\item $\pi_H\defeq H(\tau)$.
+\item $\pi_K\defeq \alpha_A \rho_A\mida(\tau) + \alpha_B \rho_B\midb(\tau) + \alpha_C\rho_A\rho_B(\midc(\tau)+ Z(\tau)H(\tau))$
+$+ \beta(\rho_A\mida(\tau)+\rho_B\midb(\tau) + \rho_A\rho_B\midc(\tau))$.
 \end{enumerate}
  and outputs $\prf = (\pi_A,\pi_B,\pi_C,\pi_K)$,
  
 
-\paragraph{\underline{\bctv verifier:}\\}
-Denote the ``public input component'' 
+\paragraph{\underline{verifier:}\\}
+Denote the ``public input components'' 
 \[ \PI(x) \defeq \pk_{A,0} + \sum_{i=1}^n x_i \pk_{A,i} = \enc{\rho_A A_0(\tau) + \sum_{i=1}^n x_i \rho_A A_i(\tau) }\]
+\[ \PIb(x) \defeq  \rho_B B_0(\tau) + \sum_{i=1}^n x_i \rho_B B_i(\tau) \]
+\[ \PIc(x) \defeq \rho_A\rho_B C_0(\tau) + \sum_{i=1}^n x_i \rho_A\rho_B C_i(\tau) \]
+
 %  For an element $a$ of \G1 (\G2) denote by \dl{a} the discrete log of $a$ w.r.t $g_1(g_2)$.
  The verifier, using pairings and the verification key, checks the following.
 \begin{enumerate}
-\item $e(\pi_K,g_2)= e(\pi_A,\enc{\alpha_A+\beta})\cdot e(\enc{\alpha_B+\beta},\pi_B)\cdot e(\pi_C,\enc{\alpha_C+\beta})\cdot$
-e()$.
-\item $e(\PI(x)+\pi_A,\PIb(x)\pi_B)= e(\PIc(x)+pi_C,g_2)$.
+\item $\pi_K =     \alpha_A\cdot \pi_A+ \alpha_B\pi_B+\alpha_C\cdot \pi_C+ \beta(\pi_A+\pi_B+\pi_C)$
+.
+\item $(\PI(x)+\pi_A)(\PIb(x)+\pi_B)= (\PIc(x)+pi_C)+\rho_A\rho_B\cdot \pi_H Z(\tau)$.
  \end{enumerate}
+
  
+ \section{Security proof}
+ Fix an efficient \adv. There exists an efficient \ext such that given \trapdoor,
+ for any public input \inp, the probability that \adv outputs a verifying instanproof \prf, and $\ext(\inp,\randadv,\trapdoor)$
+ doesn't output a witness \wit is \negl.
+ \paragraph{Description of \ext}
+ Suppose that \adv has constructed a verifying proof $\enc{\pi_A},\enc{\pi_B},\enc{\pi_C},\enc{\pi_H},\enc{\pi_K}$ for public input \inp.
  
-\section*{Acknowledgements}
-We thank Sean Bowe for useful discussions and a review of this note.
+ In particular, we have
+ \[\alpha_A \pi_A + \alpha_B \pi_B + \alpha_C\pi_C+  \beta(\pi_A + \pi_B + \pi_C) = \pi_K\]
+ 
+ This is implies by Lemma \ref{lem:batchLKE} that given $\alpha_B,\alpha_C,\beta\in \trapdoor$
+ and \advrand, \ext can extract coefficients $c_1,\ldots,c_m$ such that
+ \[\pi_A = \sum_{i= n+1}^m c_i\cdot \rho_A \cdot A_i(\tau)\]
+ \ext outputs $(c_{n+1},\ldots,c_m)$ as the candidate witness.
+ 
+ Let $\gamma$ be the probability that \adv outputs a validating $(\inst,\inp,\prf)$ with \inst of degree $d$ but 
+ \ext doesn't output a valid witness \wit for $(\inst,\inp)$ we show an efficient \advprime 
+ that solves $D$-span for $D=4d+4$ with probability $\gamma-\negl$ thus implying $\gamma=\negl$ under $D$-span.
+ 
+ Continue like in Pincchio
+ 
+%\section*{Acknowledgements}
 \bibliographystyle{alpha}
 \bibliography{References}
 
