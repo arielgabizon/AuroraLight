@@ -8,7 +8,7 @@
 %\usepackage{setspace}
 \usepackage{xspace}%,enumitem}
 %\usepackage{times}
-\usepackage{fullpage}
+\usepackage{fullpage,array}
 %\usepackage{hyperref}
 %\doublespacing
 \usepackage{color}
@@ -17,6 +17,8 @@
 \usepackage{amsopn}
 %\usepackage{hyperref} 
 \usepackage{mathrsfs}
+\usepackage{float}
+\restylefloat{table}
 
 \providecommand{\sqbinom}{\genfrac{\lbrack}{\rbrack}{0pt}{}}
 \DeclareMathOperator{\spn}{span}
@@ -122,7 +124,7 @@
 \fi
 \providecommand{\improvement}[1]{{\color{red} \textbf{#1}}}
 \title{%
-On the size of pairing-based proofs under linear knowledge assumptions}
+On the efficiency of pairing-based proofs under the $d$-PKE}
 \date{\today}
 \author{Ariel Gabizon\thanks{Part of this work was done while being supported by the Zcash Company.}}
 \date{}
@@ -153,7 +155,7 @@ On the size of pairing-based proofs under linear knowledge assumptions}
 \newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
 \newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
 \newcommand{\players}{\ensuremath{[n]}\xspace}
-\newcommand{\adv}{\ensuremath{A}\xspace}
+\newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
 \newcommand{\advprime}{\ensuremath{A'}\xspace}
 \newcommand{\extprime}{\ensuremath{E'}\xspace}
 \newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
@@ -175,6 +177,8 @@ On the size of pairing-based proofs under linear knowledge assumptions}
 \newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
 \newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
 \newcommand{\snark}{\ensuremath{\mathscr S}\xspace}
+\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
 
 \newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
 \newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
@@ -231,8 +235,11 @@ On the size of pairing-based proofs under linear knowledge assumptions}
 \newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
 \newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
 \num\newcommand{\p1}{\ensuremath{P_1}\xspace}
-\newcommand{\advv}{\ensuremath{A^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
+\newcommand{\advv}{\ensuremath{ {\mathcal A}^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
 \newcommand{\crs}{\ensuremath{\sigma}\xspace}
+%\num\newcommand{\crs1}{\ensuremath{\mathrm{\sigma}_1}\xspace}
+%\num\newcommand{\crs2}{\ensuremath{\mathrm{\sigma}_2}\xspace}
+
 \renewcommand{\sim}{\ensuremath{\mathsf{sim}}\xspace}%the distribution of messages when \advv simulates message of \p1
 \newcommand{\real}{\ensuremath{\mathsf{real}}\xspace}%the distribution of messages when \p1 is honest and \adv controls rest of players
  \newcommand{\koevec}[2]{\ensuremath{(1,#1,\ldots,#1^{#2},\alpha,\alpha #1,\ldots,\alpha #1^{#2})}\xspace}
@@ -243,7 +250,7 @@ On the size of pairing-based proofs under linear knowledge assumptions}
 \newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
 \newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
 \newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
-\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\log r)}\xspace}
+\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
 \newcommand{\ro}{\ensuremath{{\mathcal R}}\xspace}
 \newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
  \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
@@ -252,19 +259,112 @@ On the size of pairing-based proofs under linear knowledge assumptions}
  \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
  \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
 \newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
-\newcommand{\PI}{\ensuremath{\mathsf{PI_A}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
 \newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
 \newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
 \newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
 \begin{abstract}
-We investigate the minimal number of group elements in a SNARK proof when using only a ``linear'' knowledge assumption rather than a ``quadratic'' one as implicitly happens in Groth \cite{Groth16}.
-We present a simple lemma to ``batch'' knowledge checks that allows us to batch 4 elements of the Pinocchio proof system into one. As a result we get proofs with 5 group elements under very similar assumptions to the 8-element proofs of \cite{PHGR}.
+We investigate the minimal number of group elements and prover running time in a zk-SNARK when using only a symmetric ``linear'' knowledge assumption, like the $d$-Power Knowledge of Exponent assumption, rather than a ``quadratic'' one as implicitly happens in the most efficient known construction by Groth \cite{Groth16}. The proofs of 
+\cite{Groth16} contain only 3 group elements.
+We present 4 element proofs for quadratic arithmetic programs/rank 1 constraint systems under the $d$-PKE with very similar prover running time to \cite{Groth16}. Central to our construction is a simple lemma for ``batching'' knowledge checks, which allows us to save one proof element.
 \end{abstract}
 
 \section{Introduction}
 The most efficient known proving systems with succinct proofs rely on very strong cyrptographic assumptions, sometimes called non-falsifiable \cite{Naor03}. This was shown to be necessary in a sense \cite{GW11}. More specifically, the type of non-falsifiable assumptions used are refered to as \emph{knowledge assumptions}.
 Rather than being assumptions of what is hard for an adversary to do, they are of the form: \emph{if} the adversary succeeded in a certain task, \emph{he must have done it in a certain way}. More concretely, the assumptions are typically about answers to certain challenges being linear combinations of CRS elements, which translates to an extractor being able to output the coefficients of this combination.
-\paragraph{Terminology}
+
+The aim of this work is to try to minimize the type of knowledge assumption made, while preserving efficiency as much as possible.
+\subsection{On linear and quadratic knowledge assumptions}
+We present a framework for instantiating different knowledge assumptions to motivate our result.
+The definitions in this section are presented at a semi-formal level, as besides motivating the result, they are not needed for formally deriving or stating it.
+
+In the following, for $a\in \F$, \enc{a} denotes a group element $a\cdot g\in \G$
+where \F is a finite field of prime order  and \G an additive group
+also equal order. (See Section \ref{subsec:terminology} for more details on notation and terminology.)
+
+
+%Let $f:\F^\ell \to \F^t$ be a mapping where $f_i(\X)$ is always a rational function with numerator and denumerator both of degree
+%at most $D=\poly$.
+Let us recall the $d$-Power Knowledge of Exponent assumption ($d$-PKE) central to many SNARK constructions, e.g. \cite{GGPR,PHGR}:
+The adversay \adv recieves a set of encoded elements $\sett{\enc{\tau^i},\enc{\alpha \tau^i}}{i\in [0..d]}$,
+together with other elements independent of $\alpha$.
+\adv is then given the challenge of producing another pair of `ratio' $\alpha$; i.e. a pair of the form $(\enc{c},\enc{c'})= (\enc{c},\alpha\cdot \enc{c})$.
+Note that a natural way to answer the challenge is by taking \enc{c} to be some linear combination of the elements \set{\enc{\tau^i}} and by taking \enc{c'} to be the corresponding combination
+of the elements \set{\enc{\alpha\tau^i}}.
+That is, taking
+\[\enc{c}\defeq \sum_{i=0}^d a_i \cdot \enc{\tau^i},\enc{c'}\defeq \sum_{i=0}^d a_i \cdot \enc{\alpha\tau^i},\]
+for some $\a=(a_0,\ldots,a_d)\in \F^{d+1}$.
+The $d$-PKE states that this is the \emph{only way} for \adv to succeed with non-negligible probability.
+``Only way'' is then formalized by saying that whenever \adv succeeds in the challenge, another algorithm \ext, a.k.a. the extractor, will succeed in outputting the corresponding \a.
+
+Let us abstract what is going on in the $d$-PKE, so that we may generalize it. 
+We had a \emph{challenge equation}
+\[Y_2=\alpha\cdot Y_1.\]
+\adv was challenged to find group elements \enc{c},\enc{c'} such that encoded elements $c,c'$ satisfy the equation.
+\adv is given a \emph{challenge set} of elements in order to aid him in completing the challenge.
+In the $d$-PKE the challenge set is always of the form $\sett{\enc{\tau^i},\enc{\alpha \tau^i}}{i\in [0..d]}$ together with elements
+that are independent of $\alpha$.
+
+With this terminology, it is not hard to see the $d$-PKE is equivalent to the following slightly more abstract phrasing:
+The only way to satisfy the challenge equation is by taking $\enc{c},\enc{c'}$ to be linear combinations of the challenge elements such that the equation holds as a polynomial identity in $\tau,\alpha$ (and possibly other variables appearing in the auxiliary information independent of $\alpha$).
+
+Now, given this terminology and phrasing of the assumption, it is immediate to see how it generalizes.
+Instead of looking at the equation $Y_2=\alpha \cdot Y_1$, we could look at any equation.
+%whose coefficients are expressions in \X.
+
+For example, a multi-variate linear equation
+$Y_t= \alpha_1\cdot Y_1 +\ldots + \alpha_{t-1}\cdot Y_{t-1}$.
+Lemma \ref{lem:batchPKE} will roughly show that this equation does not lead to a stronger assumption than the two variable original version.
+% 
+% We could look at a challenge set where the elements multiplied by $\alpha$ are not necessarily powers of $\tau$, but a more general set. The derived assumption is exactly what our construction will use and is Definition \ref{dfn:linearkoeassumption}.
+
+Naturally, we could also look at higher degree challenge equations.
+When our proofs are pairing-based, as the equations are typically derived from verifier checks, there is no point in looking at degree larger than two.
+Assuming \adv is a generic group adversary as in the security proof of Groth \cite{Groth16} implies\footnote{This is strictly true when the auxiliary data is ``low-degree'' in the sense described in Definition \ref{dfn:koeassumption} and Remark \ref{rem:benign}} making the assumption for any degree $d$ equation and challenge set when $d=\poly$.
+In particular, instead of using the generic group model, the security proof of \cite{Groth16} can be done by making such an assumption for some \emph{quadratic} equation.
+
+Arguably, assumptions involving quadratic equations are stronger than assumptions regarding linear equations, which is why it is of value to maximize SNARK efficiency while restricting oneself to linear assumptions like the $d$-PKE - this being the purpose of our work.
+
+\paragraph{Symmetric vs asymmetric assumptions}
+Groth and Maller \cite{GM17} cleverly notice that when using an asymmetric pairing
+even the trivial equation $Y_2=Y_1$ can lead to a plausible assumption when requiring $c$ and $c'$ to be encoded in the distinct source groups;
+and that using square arithmetic programs inspired by Danezis et. al \cite{DFGK14}, one can get a 3 element proof as in \cite{Groth16} under only the linear assumption corresponding to this equation (with a ``bonus'' of obtaining simulation extractability which was the focus of that work). However, the use of SAPs rather than QAPs increases field and group operations significantly when starting with an arithmetic circuit; and arguably a symmetric linear assumption is better than the non-symmetric one used by \cite{GM17} - which can roughly be seen as assuming there is no efficiently computable isomorphism between the two pairing source groups, even when requiring correct computation on only a polynomially small fraction of inputs.
+
+
+\subsection{Relation to previous work}
+As alluded to above, the most relevant works for comparison are \cite{Groth16,GM17}.
+We also mention that our security proof is very much inspired by that of \cite{GM17}.
+We summarize the tradoffs between the three works.
+Suppose we start with an arithmetic circuit with $n$ multiplication gates, $m$ wires.
+We think of $\ell<m$ of the wires as public (usually these will all be input and output wires of the circuit), and are interested in a zk-SNARK showing
+that given a value \inp of the public wires, the prover knows an assignment to the other $m-\ell$ wires consistent with the circuit computation.
+Below $E_1 (E_2)$ denotes exponentations in $\G_1 (\G_2)$, $P$ means pairings.
+
+Pairing based SNARKs are almost always instantiated using asymmetric pairings, where operations in the second source group $\G_2$ are considerably more expensive than in the first.
+
+The main point here is that we preserve the amount of $\G_2$ prover operations from \cite{Groth16}, rather than doubling it as in \cite{GM17}, while adding roughly only $n$ $\G_1$ operations.
+
+ \paragraph{\cite{Groth16}:} \textit{\textbf{Size:}} 2 $\G_1$, 1 $\G_2$.  \textit{\textbf{Prover operations:}} 
+ $m+3n-\ell+3$ $E_1$, $n+1$ $E_2$. \textit{\textbf{Verifier operations:}} $\ell$ $E_1$, 3 $P$. \textit{\textbf{Knowledge assumption:}} Quadratic symmetric.
+ \paragraph{\cite{GM17}:} \textbf{\textit{Size:}} 2 $\G_1$, 1 $\G_2$.  \textbf{\textit{Prover operations:}} 
+ $m+4n-\ell$ $E_1$, $2n$ $E_2$. \textbf{\textit{Verifier computation:}} $\ell$ $E_1$, 5 $P$, \textbf{\textit{Knowledge assumption:}} Linear asymmetric.
+ \paragraph{This work:} \textbf{\textit{Size:}} 3 $\G_1$, 1 $\G_2$.  \textbf{\textit {Prover operations:}} 
+ $m+2n+\mathrm{min}(2n,m+2)-\ell+2$ $E_1$, $n$ $E_2$. \textbf{\textit{Verifier computation:}} $\ell$ $E_1$, 5 $P$. \textit{\textbf{Knowledge assumption:}} Linear symmetric.
+ 
+
+% \begin{table}[]
+% \begin{tabular}{l|l|l|m{4cm}}
+%                      & Groth  & Groth-Maller & This work \\ \hline
+% Proof Size           &  2 $\G_1$, 1 $\G_2$ &      2 $\G_1$, 1 $\G_2$         &  3 $\G_1$, 1 $\G_2$ \\        \hline
+% Prover Computation   &  $m+3n-\ell+3\;E_1\;n+1$ $E_2$      &      $m+4n-\ell\;E_1$, $2n\;E_2$        &  $m+2n+\mathrm{min}(2n,m+2)$\newline $-\ell+2\;E_1$, $n$ $E_2$    \\     \hline
+% Verifier Computation &        &              &  \\  \hline       
+% Knowledge Assumption &        &              &   \\  \hline 
+% \end{tabular}
+% \end{table}
+
+
+
+\subsection{Terminology and conventions}\label{subsec:terminology}
 We assume we are given a finite field \F and group \G both of the same prime order $r$,
 together with a generator $g\in\Gstar$.
 For $x\in\F$ we denote $\enc{x}\defeq x\cdot g$ and refer to \enc{x} as an \emph{encoding of $x$}.
@@ -275,202 +375,99 @@ We assume our common reference strings are always of the following form.
 We have a fixed map $f:\F^{\ell} \to \F^t$ where for each $i\in [\ell]$ $f_i(X)$ is a rational function of total degree at most $d$ in both numerator and denumerator,
 and the common reference string is of the form $\enc{f(\x)}$ for uniform $\x\in\F^\ell$
 
-\subsection{On linear and quadratic knowledge assumptions}
-We present a framework for instantiating different knowledge assumptions to motivate our result.
-The definitions in this section are presented at a semi-formal level, as besides motivating the result, they are not needed for formally deriving or stating them.
+We assume all objects and algorithms are dependent on an implicit integer parameter $\lambda$.
+For example, when we refer to a field \F, we implicitly mean an infinite sequence of fields $\F(\lambda)$ indexed by $\lambda$.
+When we refer to a party \adv as \emph{efficient} we mean a circuit of size \poly.
+When we say a function is \emph{efficiently computable} we mean it is computable by a uniform algorithm of running time \poly.
 
-%Let $f:\F^\ell \to \F^t$ be a mapping where $f_i(\X)$ is always a rational function with numerator and denumerator both of degree
-%at most $D=\poly$.
-First, let us recall the $d$-Power Knowledge of Exponent assumption ($d$-PKE) central to the constructions of \cite{GGPR,PHGR}:
-The adversay \adv recieves a set of encoded elements $\sett{\enc{\tau^i},\enc{\alpha \tau^i}}{i\in [0..d]}$,
-together with other elements independent of $\alpha$.
-\adv is then given the challenge of producing another pair of `ratio' $\alpha$; i.e. a pair of the form $(\enc{c},\enc{c'})= (\enc{c},\alpha\cdot \enc{c})$.
-Note that a natural way to answer the challenge is by taking \enc{c} to be some linear combination of the elements \set{\enc{\tau^i}} and by taking \enc{c'} to be the corresponding combination
-of the elements \set{\enc{\alpha\tau^i}}.
-That is, taking
-\[c\defeq \sum_{i=0}^d a_i \cdot \enc{\tau^i},c'\defeq \sum_{i=0}^d a_i \cdot \enc{\alpha\tau^i},\]
-for some $\a=(a_0,\ldots,a_d)\in \F^{d+1}$.
-The $d$-PKE states that this is the \emph{only way} for \adv to succeed with non-negligible probability.
-``Only way'' is then formalized by saying that whenever \adv succeeds in the challenge, another algorithm \ext, a.k.a. the extractor, will succeed in outputting the coefficients of the corresponding linear combination.
+Moreover, we assume existence of an efficient group generator \groupgen, that given $\lambda$ outputs 
+representations of groups $\G,\Gt$ and a finite field \F all of prime order $r\geq 2^{\lambda}$,
+and a uniformly chosen generator $g\in \G$.
+We also assume the existence of an efficiently computable non-degenerate bi-linear pairing $e:\G\times\G \to \Gt$.
+Whenever stating a theorem or assumption, we assume the involved parties have access to the output of \groupgen. So, when stating a cryptographic assumption, the assumption implicitly depends on the group generator used.
 
-Let us abstract what is going on in the $d$-PKE, so that we may generalize it. 
-We had a \emph{challenge equation}
-\[Y_2=\alpha\cdot Y_1.\]
-\adv was challenged to find group elements \enc{c_1},\enc{c_2} such that encoded elements $c_1,c_2$ satisfy the equation.
-
-
-\adv is given a \emph{challenge set} of elements in order to aid him in completing the challenge.
-In the $d$-PKE the challenge set is always of the form $\sett{\enc{\tau^i},\enc{\alpha \tau^i}}{i\in [0..d]}$ together with elements
-that are independent of $\alpha$.
-
-With this terminology, it is not hard to see the $d$-PKE is equivalent to the following slightly more abstract phrasing:
-The only way to satisfy the challenge equation is by taking $\enc{c_1},\enc{c_2}$ to be linear combinations of the challenge elements such that the equation holds as a polynomial identity in \X.
-
-Now, given this terminology and phrasing of the assumption, it is immediate to see how it generalizes.
-Instead of looking at the equation $Y_2=\alpha \cdot Y_1$, we could look at any equation whose coefficients are expressions in \X.
-
-For example, if $\X=(\alpha_1,\ldots,\alpha_{t-1})\cup \X'$, we could look at a more general linear equation
-$Y_t= \alpha_1\cdot Y_1 +\ldots + \alpha_{t-1}\cdot Y_{t-1}$.
-Lemma \ref{lem:batchLKE} will roughly show that this equation does not lead to a stronger assumption than the two variable original version.
-
-We could look at a challenge set where the elements multiplied by $\alpha$ are not necessarily powers of $\tau$, but a more general set. The derived assumption is exactly what our construction will use and is Definition \ref{dfn:linearkoeassumption}.
-
-Naturally, we could also look at higher degree challenge equations. When are proofs are pairing-based, as the equations are typically derived from verifier checks, there is no point in looking at degree larger than two.
-
-\cite{Groth16} implicitly uses an assumption with a quadratic equation.
-
-Assuming \adv is a generic group adversary corresponds to making the assumption for any degree $d$ equation and challenge set when $d=\poly$.
-The security proof of \cite{Groth16} in the generic group model, can be viewed in this framework as making such an assumption for some \emph{quadratic} equation.
-
-Arguably, assumptions involving quadratic equations are stronger than assumptions regarding linear equations, which is why it is of value to maximize SNARK efficiency when restricting oneself to linear assumptions - and this is precisely the theme of this work
-% 
-% 
-% In this terminology, what \cite{Groth16}
-% 
-% 
-% A uniform $(\x,\in\F^\ell$ is chosen and the adversary recieves \set{\enc{a_i\defeq f_i(\x)}}.
-% Now the adversary is given some equation where the values \set{a_i} can be used in the coefficients of the equation.
-% 
-% 
-% an adversary is given a challenge to find \y to variables \Y is 
-% 
-% 
-% 
-% Roughly speaking, \cite{GGPR,PHGR} relied on what we refer to here as a \emph{linear} knowledge assumptions:
-% Suppose I give you a set of group elements; assume for simplicity these group elements are evaluations of linearly independent
-% polynomials $f_i(X)$ of degree at most $d$ on a uniformly chosen point $\x\in(\Fstar)^{\ell}$.
-% Then for some subset $T$ of these elements, I also give you the elements multiplied by $\alpha$
-% for a uniform and independent $\alpha\in\Fstar$.
-% 
-% Then I give you a challenge: Produce some pair of group elements of `ratio $\alpha$', i.e. a pair of the form $(\enc{c},\enc{d})= (\enc{c},\alpha\cdot \enc{c})$.
-% Note that if I construct $\enc{c}$ as a linear combination $\enc{c}=\sum_{x\in T} a_x\cdot x$ for coefficients $a_x\in\F$,
-% I would be able to construct the element $\alpha\cdot \enc{c} =\sum_{x\in T} a_x\cdot \alpha x$, as I possess the elements $\alpha\cdot x$ for $x\in T$.
-% A ``linear'' knowledge assumption would assert that this is the only way one could construct a pair of ratio $\alpha$.
-% It is linear in the sense that the equation I am challenged to satisfy, when thinking of $\alpha$ as a coefficient, is linear
-% in the encoded elements $c,d$; specifically the equation is $Y=\alpha\cdot X$.
-% One way to phrase this assumption is:
-%  that the only way of satisfying the equation $Y=\alpha\cdot X$, is by
-% \begin{enumerate}
-%  \item Having the assignment to $X,Y$ be linear combinations of the received elements.
-%  \item These linear combinations being such that the equation is a polynomial identity in $\x,\alpha$.
-% \end{enumerate}
-% 
-% This 
-% 
-% 
-% To go beyond the efficiency of \cite{PHGR}, Groth \cite{Groth16} assumed his adversary is a \emph{generic group adversary};
-% rather than using a cryptographic assumption. In our terminology above assuming the generic group model, corresponds to assuming that also when the challenge equation is not linear the only way an adversary can satisfy it with non-negligible probability is as above - assigning the variables using linear combinations of the CRS, and acheiving a polynomial identity in the trapdoor elements.
-% 
-% In partciular, for \cite{Groth16} we could prove security by, instead of assuming the generic group model, assuming a ``quadratic knowledge assumption'' something like.
-% The only way to supply \enc{c},\enc{d},\enc{e} satisfying
-% \[c\cdot d = \delta e + \gamma\]
-% for some $\delta,\gamma$ is like above.
-% 
-% 
-% 
-% It is possible, instead of using the generic group model, to prove the security of \cite{Groth16} from a concrete assumption. The assumption we would get we could aptly call a \emph{quadratic       }
-% 
-% 
-% The most efficient known proving system, requiring only three group element proofs, was designed by Groth \cite{Groth16}. Its security is proven in the ``Generic Group Model'' in which all used non-falsifiable assumptions hold. The model implies, at least when the CRS elements are of low degree, that all the malicious prover can do is take a non-adaptive linear combination of the key elements.
 
 \section{Cryptographic assumptions}
 
-Previous proving systems \cite{GGPR, PHGR} relied on the \emph{d-power knowledge of exponent assumption:}
-
+%Previous proving systems \cite{GGPR, PHGR} relied on the \emph{d-power knowledge of exponent assumption:}
+We formally define the $d$-PKE that was described in the previous section.
 \begin{dfn}[$d$-Power Knowledge of Exponent Assumption ($d$-PKE)]\label{dfn:koeassumption}
 For any efficient \adv there exists an efficient \ext such that the following holds.
-Fix an efficient  randomized circuit $S$ with input domain $\G^{(d+1)}$.
+Fix a constant $t$ and $M=\poly$, and an efficiently computable degree $d$ rational map $S:\F^{t+1}\to\F^M$.
  Consider the following experiment.
 
- $\tau,\alpha\in \F^*$ and $g\in \Gstar$ are chosen uniformly. We denote $V\defeq \koevec{\tau}{d}\cdot g$
- Then \adv is given as input $(V,S( V))$;
- and outputs a pair of the form $(c,d)$ in $\G$, which he ``hopes'' is of the form $(c,\alpha c)$.
-   \ext, given the same input, outputs  
- $a_0,a_1,\ldots,a_q \in \F$ such that the probability that both
+ $\tau,\alpha\in \F,\x\in\F^t$ are chosen uniformly. We denote $V\defeq \koevec{\tau}{d}$
+ Then \adv is given as input $(V,S(\tau,\x))$
+ and outputs a pair $(\enc{c},\enc{c'})$ of $\G$ elements, which he ``hopes'' is of the form $(\enc{c},\enc{\alpha c})$.
+   \ext, given the same input, outputs a polynomial $A\in \F[X]$ of degree at most $d$ that the probability that both
    
  \begin{enumerate}
-  \item \adv ``succeeded'', i.e., $c=\alpha\cdot b$. But,
-  \item \ext ``failed'', i.e., $c \neq (\sum_{i=0}^q a_i \tau^i)\cdot g_1$.
+  \item \adv ``succeeded'', i.e., $c'=\alpha\cdot c$. But,
+  \item \ext ``failed'', i.e., $c \neq A(\tau)$.
    \end{enumerate}
-is \neg.
+is \negl.
  %The same holds when \G11 is replaced by \G21 and $g_1$ is replaced by $g_2$.
 \end{dfn}
-\begin{remark}
-Typically the PKE assumption is defined with auxiliary information rather than a randomized circuit.
-Our definition is weaker since it roughly corresponds to imposing the auxiliary information to be uniform,
+\begin{remark}\label{rem:benign}
+Typically the PKE assumption is defined with arbitrary auxiliary information rather than a rational map.
+Our definition is weaker and corresponds to imposing the auxiliary information to be the encoded output of a low degree rational map on a uniform input,
 and suffices for the security proofs of \cite{GGPR,PHGR}.
+This increases the chance our auxiliary information is ``benign'' and our assumption does not contradict indistinguishability obfuscation \cite{BCPR13}.
 \end{remark}
-The assumption roughly says the following: Suppose you've given me a bunch of group elements. Now you pick a uniform and independent $\alpha\in\F$, and for some subset $T$ of these 
-elements, you now also given me the element $\alpha\cdot x$ for each $x\in T$. Suppose now I've generated a new pair of group elements of ratio $\alpha$; that is a pair
-$(\enc{c},\enc{\alpha\cdot c})$. The $d$-PKE then says I must have constructed $c$ as a linear combination of the elements in $T$.
-In the $d$-PKE $T=\sett{\enc{\tau^i}}{i\in[0..d]}$ for uniform $\tau\in\F$.
-A natural extension would be to allow $T$ to be an arbitrary subset, which leads us to the $d$-LKE.
-\begin{dfn}[$d$-Linear Knowledge of Exponent Assumption ($d$-LKE)]\label{dfn:linearkoeassumption}
-Fix any efficient randomized circuit $C:\Gstar \to \G^{t}$ and a subset $S$ of size $d$ of $[t]$.
-For any efficient \adv there exists an efficient \ext such that the following holds.
-Consider the following experiment.
- $\alpha\in \F^*$ and $g\in \G$ are chosen uniformly.
- Denote $T\defeq \sett{C(g)_i}{i\in S}$
- \adv is given as input $C(g)$ and $\sett{\alpha\cdot x }{x\in T}$
- and outputs a pair of the form $(a,b)$ in $\Gstar$, which he ``hopes'' is of the form $(c,\alpha c)$.
-   \ext, given the same input and the randomness of \adv, outputs  
- $a_1,\ldots,a_d \in \F$ such that the probability that both
-   
- \begin{enumerate}
-  \item \adv ``succeeded'', i.e., $b=\alpha\cdot a$. But,
-  \item \ext ``failed'', i.e., $a \neq (\sum_{i=1}^d a_i \tau^i)\cdot g_1$.
-   \end{enumerate}
-is \neg.
-\end{dfn}
 
+We show that the $d$-PKE can be used to ``batch'' knowledge checks.
 
-
-We show that the $d$-LKE can be used to ``batch'' knowledge checks.
-
-\begin{lemma}\label{lem:batchLKE}
-Assuming the $d$-LKE the following holds. Fix $k=\poly$.
-Fix any efficient randomized circuit $C:\G \to \G^{t}$ and subsets $S_1,\ldots,S_k$ of size at most $d$ of $[t]$.
+\begin{lemma}\label{lem:batchPKE}
+Assuming the $d$-PKE the following holds. Fix $k=\poly$,
+a constant $t$ and an efficiently computable degree $d$ rational map $S:\F^{t+1}\to\F^M$.
 Fix any $i\in [k]$.
 For any efficient \adv there exists an efficient \ext such that the following holds.
 Consider the following experiment.
- $\alpha_1,\ldots\alpha_k\in \F^*$ and $g\in \grouppair$ are chosen uniformly.
- Denote $T_j\defeq \sett{C(g)_i}{i\in S_j}$.
- \adv is given as input $C(g)$ and $\sett{\alpha\cdot x }{x\in T}$
- and outputs for some $\ell \in [k]$, a set of elements  $(a_1,\ldots, a_k,b)$ in $\Gstar$.
+ $\alpha_1,\ldots\alpha_k,\tau\in \F$ and $\x\in\F^t$ are chosen uniformly.
+ \adv is given as input $\enc{S(\tau,\x)}$ and $\sett{\enc{\alpha_j\cdot \tau^\ell} }{j\in [k], \ell \in [0..d]}$
+ and outputs a sequence of elements  $(\enc{a_1},\ldots, \enc{a_k},\enc{b})$ in $\Gstar$.
    \ext, given the same input as \adv together with the randomness of \adv and $\sett{\alpha_j}{j\in [k]\setminus\set{i}}$, outputs  
- $a_1,\ldots,a_d \in \F$ such that the probability that both
+ $A(X) \in \F[X]$ of degree at most $d$ such that the probability that both
    
  \begin{enumerate}
   \item \adv ``succeeded'', i.e., $b=\sum_{j=1}^k\alpha_j\cdot a_j$. But,
-  \item \ext ``failed'', i.e., $a_i \neq (\sum_{i=1}^d a_i \alpha_i)\cdot g_1$.
+  \item \ext ``failed'', i.e., $a_i \neq \enc{A(\tau)}$.
    \end{enumerate}
 is \neg.
 \end{lemma}
 \begin{proof}
- Fix $k,C,\adv, S_1,\ldots,S_k$ and $i\in [k]$ as in the lemma. Assuming the $d$-LKE we aim to construct \ext satisfying the lemma statement. Consider the following efficient $\adv'$, that on input $C(g), T_i$ samples random \sett{\alpha_\ell\in \Fstar}{\ell\in [k]\setminus\set{i}},  computes $\sett{T_\ell}{\ell\in [k]\setminus\set{i}}$ and invokes \adv with
- uniformly chosen randomness \randadv on $C(g),T_1,\ldots,T_k$.
- When \adv returns $(a_1,\ldots,a_k,b)$, \advprime returns $(a_i,b')$ where
- \[b' = b-\sum_{\ell\in [k]\setminus\set{i}} \alpha_\ell\cdot a_\ell.\]
- Note that \adv succeeds exactly when \advprime succeeds in the sense that
- given any value of $C(g),\set{\alpha_\ell},\randadv$,
- \[\sum_{\ell\in [k]} \alpha_\ell\cdot a_\ell  = b \leftrightarrow \alpha_i\cdot a_i = b'\]
- Let \extprime be the extractor guaranteed to exist for $\advprime,C,T_i$ from the $d$-LKE.
- Note that the input for \extprime is $C(g),T_i$ together with the inner randomness of \advprime which is 
+ Fix $k,t,S,\adv$ and $i\in [k]$ as in the lemma. Assuming the $d$-PKE we aim to construct \ext satisfying the lemma statement. Consider the following efficient $\advv$, that on input $\enc{S(\tau,\x)}\cup \sett{\enc{\alpha_i \tau^\ell}}{\ell\in [0..d]}$ samples random \sett{\alpha_\ell\in \Fstar}{\ell\in [k]\setminus\set{i}},  computes $\sett{\enc{\alpha_j \tau^\ell}}{j \in [k]\setminus\set{i}, \ell\in [0..d]}$ and invokes \adv with
+ uniformly chosen randomness \randadv on $\enc{S(\tau,\x)}\cup\sett{\enc{\alpha_j\cdot \tau^\ell} }{j\in [k], \ell \in [0..d]}$.
+ When \adv returns $(\enc{a_1},\ldots,\enc{a_k},\enc{b}
+ )$, \advv returns $(\enc{a_i},\enc{b'})$ where
+ \[\enc{b'} = \enc{b}-\sum_{j\in [k]\setminus\set{i}} \alpha_j\cdot \enc{a_j}.\]
+ Note that \adv succeeds exactly when \advv succeeds in the sense that
+ %given any value of $\enc{S(\tau,\x)},\set{\alpha_j},\randadv$,
+ \[\sum_{j\in [k]} \alpha_j\cdot a_j  = b \Leftrightarrow \alpha_i\cdot a_i = b'.\]
+ Let \extprime be the extractor guaranteed to exist for $\advv,S$ from the $d$-PKE.
+ Note that the input for \extprime is $\enc{S(\tau,\x)}\cup \sett{\enc{\alpha_i \tau^\ell}}{\ell\in [0..d]}$ together with the inner randomness of \advv which is 
  $\randadv,\sett{\alpha_\ell}{\ell\in [k]\setminus\set{i}}$.
- 
+ Given this input the probability that \advv succeeds in outputting a pair $(\enc{a_i},\enc{b'})$ with $b'=
+ \alpha_i\cdot a_i$, and \ext doesn't output $A$ of degree at most $d$ with $A(\tau) = a_i$ is \negl.
  Now define \ext to be the (identical) extractor that given 
- $(C(g),T_i,\randadv,\sett{\alpha_\ell}{\ell\in [k] \setminus\set{i}}$,
- simply returns the output $c_1,\ldots,c_d$ of \extprime on the same input.
+ $\randadv,\enc{S(\tau,\x)}\cup \sett{\enc{\alpha_i \tau^\ell}}{\ell\in [0..d]},\sett{\alpha_\ell}{\ell\in [k] \setminus\set{i}}$,
+ simply returns the output $A$ of \extprime on the same input.
 \end{proof}
 
 
 
-To simplify the proof we give an assumption that generalizes the $d$-SDH and $q$-PDH used in \cite{PHGR}, 
-that we call the $d$-SPAN assumption
-\begin{dfn}[d-SPAN]\label{dfn:spanassump}
- Fix integer $d$, and an $\F$-subspace $V$ of $\F(X)$ consisting only of polynomials of degree at most $d$.
- Let $B$ be a basis for $V$. Fix any efficient \adv, and consider the following game:
- Uniform $\tau\in \F$ and $g\in \G$ are sampled, and \adv is given \sett{f(\tau)}{f\in B}. Then the probability that \adv 
+The following assumption generalizes the $d$-SDH and $d$-PDH used in \cite{GGPR, PHGR}, and is very similiar to computational polynomial assumption from \cite{GM17},
+except that it also allows rational functions.
+
+The $d$-PDH for example, says you should not be able to output \enc{\tau^{d+1}} after seeing encodings of smaller powers of $\tau$. The generalization here is that we assume an adversary, after seeing encoded evaluations of multi-variate rational functions, can only knowingly output an encoding of a rational function that is in the span of those it has seen.
+\begin{dfn}[(t,d)-SPAN]\label{dfn:spanassump}
+ Fix integers $t,d$.
+Fix an efficiently computable degree $d$ rational map $S:\F^{t}\to\F^M$.
+Let $V$ be the $\F$-subspace of $\F(X_1,\ldots,X_t)$
+spanned by the output coordinates of $S$; i.e.
+$V\defeq \span(\sett{S_i}{i\in[M]})$.
+Fix any efficient \adv, and consider the following game:
+ Uniform $\x \in \F^t$ is sampled and  \adv is given \enc{S(\x)}. Then the probability that \adv 
  outputs  $p,q\in \F(X)$ and $h\in \G$ such that
  \begin{enumerate}
   \item $\deg(p),\deg(q)\leq d$.
@@ -503,13 +500,13 @@ The quadruple of algorithms $\snark = (\gen,\prv,\ver,\simprv)$ is a zk-SNARK fo
 \begin{enumerate}
  \item \textbf{Completeness}: For any common reference string \crs output by \gen, and any $(\inp,\wit)\in \rel$, if $\prf = \prv(\crs,\inp,\wit)$; then
  $\ver(\crs,\inp,\prf) = \acc$ with probability one.
-\item \textbf{Perfect Zero-Knowledge:} For any output $(\trapdoor,\crs)$ of \gen and $(\inp,\wit)\in \rel$, the distribution of $\simprv(\trapdoor,\inp)$
-is identical to that of $\prv(\crs,\inp,\wit)$.
+\item \textbf{Statistical Zero-Knowledge:} For any output $(\trapdoor,\crs)$ of \gen and $(\inp,\wit)\in \rel$, the distribution\footnote{For simplicity, we present our SNARK with only statistical zero-knowledge, but a slight complication of the construction can give perfect zero-knowledge.} of $\simprv(\trapdoor,\inp)$
+is \negl-close to that of $\prv(\crs,\inp,\wit)$.
 
 \item \textbf{Knowledge Soundness:}
 
-For any efficient adversary \adv  making \poly steps, there exists an efficient  \ext of such that the following holds:
-Suppose that \adv 
+For any efficient adversary \adv, there exists an efficient  \ext such that the following holds:
+Suppose that \adv, given \crs,
 outputs a pair $(\inp,\prf)$ and \ext given \advrand and \trapdoorext,
 outputs \wit.
 The probability, over the randomness of \adv and that of \gen while outputting $((\trapdoorext,\trapdoorsim),\crs)$,
@@ -522,167 +519,176 @@ is \negl.
  \end{enumerate}
  
  \end{dfn}
- 
-\subsection{Description of our SNARK}\label{subsec:SNARK}
-We assume familiarity with quadratic arithmetic programs.
-See e.g., Section 2.3 in \cite{Groth16} for definitions.
-We use similar notation to \cite{BCTV}, denoting by $m$ the size of the QAP, $d$ the degree and $n$ the number of public inputs.
-More specifically, our QAP has the form \set{\sett{A_i(X),B_i(X),C_i(X)}{i\in [0..m]}, Z(X)}
-where $A_i,B_i,C_i\in \F[X]$ have degree at most\footnote{\cite{BCTV} define $A_i,B_i,C_i$ to be of degree strictly less than $d$, however since $Z$ needs to be later added to \set{A_i},\set{B_i},\set{C_i} for zero-knowledge, it is more convenient for us to allow degree at most $d$ and assume $Z$ is already included. Note that in terms of the set of satisfiable instances $x\in \F^n$ every degree $d$ QAP is equivalent to one where \set{A_i,B_i,C_i} have degree smaller than $d$ obtained by taking the original polynomials mod $Z$.} $d$, and $Z\in \F[X]$ has degree exactly $d$.
+\subsection{QAPs} 
+We assume familiarity with quadratic arithmetic programs \cite{GGPR}, but briefly describe the necessary definitions.
+A QAP \qap of size $m$, degree $n$, with $\ell$ public inputs over \F
+is defined by a set of univariate polynomials \set{\sett{A_i(X),B_i(X),C_i(X)}{i\in [0..m]}, Z(X)}
+where $A_i,B_i,C_i\in \F[X]$ have degree smaller than $n$, and $Z\in \F[X]$ has degree exactly $n$.
+We say $\inp=(x_1,\ldots,x_\ell)\in \F^\ell,\wit=(x_{\ell+1},\ldots,x_m) \in \F^{m-\ell}$ \emph{satisfy \qap}, if when defining $x_0=1$,
+$A\defeq \sum_{i=0}^m x_i\cdot A_i, B\defeq \sum_{i=0}^m x_i \cdot B_i,$ and $C\defeq \sum_{i=0}^m x_i \cdot C_i$;
+then the polynomial $P\defeq A\cdot B - C$ will be divisble by $Z$.
+
+\subsection{Randomizing QAP witnesses}
+When describing our SNARK in the next section we will assume the sequences of QAP polynomials were extended in the following way:
+\[A_{m+1}=B_{m+2}=Z, A_{m+2}=B_{m+1}=C_{m+1}=C_{m+2} =0.\]
+(note in particular that we allow these new polynomials to be of degree $n$ while the former are of degree smaller than $n$.)
+For any values $x_{m+1},x_{m+2}\in\F$, $\inp,(\wit,x_{m+1},x_{m+2})$ satisfy the extended QAP if and only if $\inp,\wit$ satisfiy the original one.
+When describing the prover algorithm in the next section we will assume the values of $x_{m+1},x_{m+2}$ in the prover's witness \wit have been chosen uniformly, and also reindex and denote by $m$ the total number of QAP polynomials after this extension.
+
+\section{Description of our SNARK}\label{subsec:SNARK}
 
 
+ Let $R$ be the relation of pairs $(\inp,\wit)$ such that $\inp,\wit$ satisfy \qap.
+We proceed to describe our zk-SNARK for the relation $R$.
 
-
-
-
-
-
-We proceed to describe our proving system.
-We assume we are already given a description of the groups $\G,\Gt$, the pairing $e$, and a uniformly chosen generator 
-$g\in \G$, and these are all public.
+%We assume we are already given a description of the groups $\G,\Gt$, the pairing $e$, and a uniformly chosen generator 
+%$g\in \G$, and these are all public.
 \paragraph{\underline{Key Generation:}}
 
+\paragraph{}
 \begin{enumerate}
- \item Sample random $\tau,\alpha_A,\alpha_B,\alpha_C,\gamma,\beta\in \F^*$
- \item For $i\in [0..d]$ output $\pk_{H,i}\defeq \enc{\rho_A\rho_B \tau^i\cdot Z(\tau)}$
-\item For $i\in [0..d]$ output $\pk'_{H,i}\defeq \enc{\alpha_C \rho_A\rho_B \tau^i\cdot Z(\tau)}$
- \item For $i\in [0..m]$ output
- 
- \begin{enumerate}
-  \item $\enc{\pk_{A,i}}\defeq \enc{\rho_A A_i(\tau)}$
-  
-\item $\enc{\pk_{B,i}}\defeq\enc{\rho_B B_i(\tau)}$,
-\item $\enc{\pk_{C,i}}\defeq \enc{\rho_A\rho_B C_i(\tau)}$,
+ \item Sample random $\tau,\beta_A,\beta_B,\delta\in \F$.
+ \item Define, for $i\in [0..m]$, the tri-variate polynomial $K_i(\tau,\beta_A,\beta_B)\defeq \beta_B A_i(\tau) + \beta_A B_i(\tau) + C_i(\tau)$. And the rational map 
+ \[\crs_1(\tau,\beta_A,\beta_B,\delta) \defeq \sett{\tau^i,\tau^i/\delta,\beta_A \tau^i,\beta_B\tau^i}{i\in[0..n]}\cup \sett{K_i(\tau)/\delta}{i\in [0..m]}
+ \]
+\item For $\tau,\alpha_A,\alpha_B,\in\F$, define $\crs_2(\tau,\alpha_A,\alpha_B)\defeq \sett{ \alpha_A\tau^i,\alpha_B \tau^i}{i\in [0..n]}$
+\item Choose uniform $\tau,\beta_A,\beta_B,\delta,\alpha_A,\alpha_B\in \F$ and set
 
-\end{enumerate}
- \item For $i\in [n+1..m]$ output
-\begin{enumerate}
-\item  $\enc{\pk'_{A,i}}\defeq\enc{\alpha_A\rho_A A_i(\tau)}$,
-\item $\enc{\pk'_{B,i}}\defeq \enc{\alpha_B\rho_B B_i(\tau)}$,
-\item $\enc{\pk'_{C,i}}\defeq \enc{\alpha_C \rho_A\rho_B C_i(\tau)}$
-\item $\enc{\pk_{K,i}}\defeq \enc{\beta(\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
-
-% \item $\pk_{K,i}\defeq \enc{\alpha_A\rho_A A_i(\tau)+\alpha_B\rho_B B_i(\tau)+\alpha_C \rho_A\rho_B C_i(\tau)+ \beta (\rho_A A_i(\tau) + \rho_B B_i(\tau) + \rho_A\rho_B C_i(\tau))}$ 
-
-\end{enumerate}
-
-\begin{remark}
- In fact it suffices to give the \emph{sum} of the $i$'th elements, instead of four separate ones, for the knowledge elements.
-\end{remark}
-
-
-\item Output the additional verification key elements $(\enc{\alpha_A},\enc{\alpha_B},\enc{\alpha_C},\enc{\gamma},\enc{\beta\gamma},\enc{\beta\gamma},\enc{\rho_A\rho_B Z(\tau)})$
+\[\crs \defeq \enc{\crs_1(\tau,\beta_A,\beta_B,\delta),\crs_2(\tau,\alpha_A,\alpha_B)}
+\]
+\[\trapdoorext= (\alpha_A,\alpha_B), \trapdoorsim= (\alpha_A,\alpha_B,\beta_A,\beta_B,\delta)\]
  \end{enumerate}
 
 \paragraph{\underline{Prover:}\\}
-The prover has in his hand a QAP solution $(x_0=1,x_1,\ldots,x_m)$ that coincides with the public input $x=(x_1,\ldots,x_n)$ and satisfies the following:
+The prover \per has in his hand a QAP solution $(x_0=1,x_1,\ldots,x_m)$ that coincides with the public input $x=(x_1,\ldots,x_\ell)$ and satisfies the following:
 If we define $A\defeq \sum_{i=0}^m x_i\cdot A_i, B\defeq \sum_{i=0}^m x_i \cdot B_i,$ and $C\defeq \sum_{i=0}^m x_i \cdot C_i$;
-then the polynomial $P\defeq A\cdot B - C$ will be divisble by the target polynomial $Z$, and \per can compute the polynomial $H$ of degree at most $d$ with $P=H\cdot Z$. Let $\amid\defeq A -\sum_{i=0}^n x_i\cdot A_i$; define \midb and \midc analogously.
+then the polynomial $P\defeq A\cdot B - C$ will be divisble by the target polynomial $Z$, and \per can compute the polynomial $H$ of degree at most $n$ with $P=H\cdot Z$.
+%Let $\amid\defeq A -\sum_{i=0}^n x_i\cdot A_i$; define \midb and \midc analogously.
 
-Given the proving key, \per computes as linear combinations of the proving key elements $\enc{\pi_A},\enc{\pi_B},\enc{\pi_C}$ $,\enc{\pi_H},\enc{\pi_K}$ where 
+Given the proving key, \per computes as linear combinations of the proving key elements $\enc{\pi_A},\enc{\pi_B},\enc{\pi_D},\enc{\pi_K}$  where 
 \begin{enumerate}
-\item $\pi_A\defeq \rho_A \amid(\tau)$ .
-\item $\pi_B\defeq \rho_B \midb(\tau)$.
-\item $\pi_C\defeq \rho_A\rho_B \midc(\tau)$.
-\item $\pi_H\defeq H(\tau)$.
-\item $\pi_K\defeq \alpha_A \rho_A\mida(\tau) + \alpha_B \rho_B\midb(\tau) + \alpha_C\rho_A\rho_B(\midc(\tau)+ Z(\tau)H(\tau))$
-$+ \beta(\rho_A\mida(\tau)+\rho_B\midb(\tau) + \rho_A\rho_B\midc(\tau))$.
+\item $\pi_A\defeq A(\tau)$ .
+\item $\pi_B\defeq B(\tau)$.
+\item $\pi_D\defeq \alpha_A A(\tau) + \alpha_B B(\tau)$.
+\item $\pi_K\defeq \left(\sum_{i=\ell+1}^m K_i(\tau,\beta_A,\beta_B)+ H(\tau)Z(\tau)\right)/\delta$.
 \end{enumerate}
- and outputs $\prf = (\pi_A,\pi_B,\pi_C,\pi_K,\pi_H)$,
+ and outputs $\prf = (\enc{\pi_A},\enc{\pi_B},\enc{\pi_D},\enc{\pi_K}).$
  
 
 \paragraph{\underline{Verifier:}\\}
-Denote the ``public input components'' 
-\[ \PI(x) \defeq \pk_{A,0} + \sum_{i=1}^n x_i \pk_{A,i} = \enc{\rho_A A_0(\tau) + \sum_{i=1}^n x_i \rho_A A_i(\tau) }\]
-\[ \PIb(x) \defeq  \rho_B B_0(\tau) + \sum_{i=1}^n x_i \rho_B B_i(\tau) \]
-\[ \PIc(x) \defeq \rho_A\rho_B C_0(\tau) + \sum_{i=1}^n x_i \rho_A\rho_B C_i(\tau) \]
+For $\inp=(x_1,\ldots,x_\ell)$, denote the ``public input component'' 
+\[ \PI(x) \defeq K_0(\tau,\beta_A,\beta_B) + \sum_{i=1}^\ell x_i  K_i(\tau,\beta_A,\beta_B) .\]
 
 %  For an element $a$ of \G1 (\G2) denote by \dl{a} the discrete log of $a$ w.r.t $g_1(g_2)$.
  The verifier, using pairings and the verification key, checks the following.
 \begin{enumerate}
-\item $\pi_K =     \alpha_A\cdot \pi_A+ \alpha_B\pi_B+\alpha_C\cdot \pi_C+ \beta(\pi_A+\pi_B+\pi_C)$
-.
-\item $(\PI(x)+\pi_A)(\PIb(x)+\pi_B)= (\PIc(x)+\pi_C)+\rho_A\rho_B\cdot \pi_H Z(\tau)$.
+\item $\pi_D = \alpha_A\cdot \pi_A + \alpha_B \cdot \pi_B$.
+\item $(\beta_A +\pi_A)\cdot (\beta_B + \pi_B) = \PI(x) + \pi_K\cdot \delta + \beta_A\cdot \beta_B$.
+ \end{enumerate}
+\paragraph{\underline{Simulator $(\inst,\inp,\trapdoorsim=(\tau,\alpha_A,\alpha_B,\beta_A,\beta_B,\delta)$):}\\}
+\begin{enumerate}
+ \item Choose $\pi_A,\pi_B\in\F$ uniformly.
+ \item Let $\pi_D \defeq \alpha_A\pi_A + \alpha_B\pi_B$.
+ \item Let $\pi_K \defeq \frac{1}{\delta}((\beta_A + \pi_A)(\beta_B + \pi_B)-\PI(x))$.
+ Output $(\enc{\pi_A},\enc{\pi_B},\enc{\pi_D},\enc{\pi_K})$.
  \end{enumerate}
 
+ In the next section we prove the following:
+ \begin{thm}\label{thm:snarkSecure}
+  Under the $n$-PKE and $(4,2n)$-SPAN assumptions the above scheme is a zk-SNARK for the relation $R$. 
+ \end{thm}
+
  
- \section{Proof of knowledge soundness}
- Fix an efficient \adv. There exists an efficient \ext such that given \trapdoor,
- for any public input \inp, the probability that \adv outputs a verifying $(\inst,\inp,\prf)$, and $\ext(\inp,\randadv,\trapdoor)$
- doesn't output a witness \wit is \negl.
- \paragraph{Description of \ext}
- Suppose that \adv has constructed a verifying proof $\enc{\pi_A},\enc{\pi_B},\enc{\pi_C},\enc{\pi_H},\enc{\pi_K}$ for public input \inp.
+ \section{Security proof}
+ The completeness and zero-knowledge properties are easily verifiable from the construction.
+ We thus focus on knowledge soundness.
+ \paragraph{Description of extractor}
+ Fix an efficient \adv. We need to describe the corresponding extractor \ext.
+Suppose that \adv has outputted $(\inp,\prf)$ such that
+$\ver(\crs,\inp,\prf)=\acc$.
+Let $\prf=(\enc{\pi_A},\enc{\pi_B},\enc{\pi_D},\enc{\pi_K})$.
  
  In particular, we have
- \[\alpha_A \pi_A + \alpha_B \pi_B + \alpha_C\pi_C+  \beta(\pi_A + \pi_B + \pi_C) = \pi_K\]
+ \[\alpha_A \cdot \pi_A + \alpha_B \cdot \pi_B  = \pi_D.\]
  
- This is implies by Lemma \ref{lem:batchLKE} that given $\alpha_B,\alpha_C,\beta\in \trapdoor$
- and \advrand, \ext can extract e.w.p. \negl coefficients $a_1,\ldots,a_m$ such that
- \[\pi_A = \sum_{i= n+1}^m a_i\cdot \rho_A  A_i(\tau)\]
- \ext outputs $(a_{n+1},\ldots,a_m)$ as the candidate witness for public input $\inp=(a_1,\ldots,a_n)$.
+ This implies by Lemma \ref{lem:batchPKE} that given $\trapdoorext =\alpha_B$
+ and \advrand, \ext can extract e.w.p. \negl a polynomial $A\in\F[X]$ of degree at most $n$ such that
+ \[\pi_A =A(\tau).\]
  
- Let $\gamma$ be the probability that \adv outputs a validating $(\inst,\inp,\prf)$ with \inst of degree $d$ but 
- \ext doesn't output a valid witness \wit for $(\inst,\inp)$ we show an efficient \advv
- that solves $D$-span for $D=4d+4$ with probability $\gamma-\negl$ thus implying $\gamma=\negl$ under $D$-span.
+ \ext uses linear algebra to determine if the polynomial $\mida(X) \defeq A(X)-\sum_{i=0}^\ell x_i A_i(X)$ is in the span of the QAP polynomials \sett{A_i}{i\in[\ell+1..m]}.
+ If not, \ext aborts. Otherwise, let $x_{\ell+1},\ldots,x_m \in \F$ be
+ such that $\mida(X) = \sum_{i=\ell+1}^m x_i A_i(X)$, and let $\wit\defeq (x_{\ell+1},\ldots,x_m)$.
+ \ext checks if $(\inp,\wit)\in R$ and if so outputs \wit as a witness for \inp.
  
- Denote $q\defeq 4(d+1)$
+ \paragraph{Analyzing \ext's failure probability}
  
- Challenge recieved: \sett{\tau^i}{i\in\set{0\ldots,q,q+2,\ldots,2q}}
- now choose random $\rho'_A,\rho'_B$
- Set $\rho_A\defeq \rho'_A\tau^{d+1}, \rho_B\defeq \rho'_B\tau^{2(d+1)}$
- Choose random $\alpha_A,\alpha_B,\alpha_C\in\Fstar$ \ariel{\Fstar easier than \F cause harder to get $\beta$ uniform in \F}.
- For $i\in [n+1..m]$, define the following set of polynomial  $R_i(X)\in\F[X]$ by 
- \[R_i(X)\defeq \rho'_A X^{d+1} A_i(X) + \rho'_BX^{2(d+1)} B_i(X) + \rho'_A\rho'_B X^{3(d+1)} C_i(X)\]
- Let $V=\span \sett{R_i(X)}{i\in [n+1..m]}$.
- Let $U$ be the space of polynomials $f\in\F[X]$ of degree at most $q= 4(d+1)$ such that for each $i\in[n+1..m]$,
- $R_i\cdot f$ has a zero coefficient at $X^{q+1}$. $U$ contains non-zero elements according to Lemma 10 in \cite{GGPR}
- Choose uniform $f\in U\in\setminus\set{0}$ and let $\beta\defeq f(\tau)$. Note that $\beta$ is uniformly distributed and independent of $\tau$,
- as we can sample uniform non-zero $f\in U$ by sampling  unifrom non-zero $f'\in U$ and then choosing $f=c\cdot f'\in U$ for uniform $c\in \Fstar$.
+ Let $\eta$ be the probability that \adv outputs a verifying $(\inp,\prf)$ with but 
+ \ext doesn't output a valid witness \wit for \inp.
+ To prove knowledge soundness we must show that $\eta=\negl.$
+ We will construct an efficient \advv
+ that solves $(4,2n)$-SPAN with probability $\eta-\negl$ thus implying $\eta=\negl$ under the $(4,2n)$-SPAN assumption.
  
- Now let $\enc{\pi_A},\enc{\pi_B},\enc{\pi_C},\enc{\pi_H},\enc{\pi_K}$ be the verifying proof \adv has constructed
- for $(\inst,\inp)$.
- Let $\ext_1,\ldots,\ext_4$ be the extractors guaranteed to exist from Lemma \ref{lem:batchLKE}
- that when supplied with $\randadv,\alpha_A,\alpha_B,\alpha_C,\beta$ will output e.w.p \negl
- coefficients  \sett{a_i,b_i,c_i,k_i}{i\in [n+1..m]} such that
- \[\pi_A =\sum_{i= n+1}^m a_i\cdot \rho_A  A_i(\tau),\pi_B = \sum_{i= n+1}^m b_i\cdot \rho_B  B_i(\tau),
-  \pi_C = \sum_{i= n+1}^m c_i\cdot \rho_A\rho_B  C_i(\tau), \pi_A+\pi_B+\pi_C = \sum_{i= n+1}^m k_i\cdot (\rho_A  A_i(\tau)+ \rho_B B_i(\tau) + \rho_C C_i(\tau)
+ The challenge \advv will receive will be $T_1\defeq \enc{\crs_1(\tau,\beta_A,\beta_B,\delta)}$
+ for uniform $\tau,\beta_A,\beta_B,\delta\in\F$.
+ 
+ Recall that
+ \[\crs_1(\tau,\beta_A,\beta_B,\delta)= \sett{\tau^i,\tau^i/\delta,\beta_A \tau^i,\beta_B\tau^i}{i\in[0..n]}\cup \sett{K_i(\tau,\beta_A,\beta_B)/\delta}{i\in [0..m]}\]
+ 
+ \advv samples uniform $\alpha_A,\alpha_B\in\F$ and computes $T_2\defeq \enc{\crs_2(\tau,\alpha_A,\alpha_B)}$.
+ Define $\crs \defeq (T_1,T_2)$.
+ \advv runs $\adv(\randadv,\crs)$ to get output $(\inp,\prf)$
+ and checks whether $\ver(\crs,\inp,\prf)=\acc$.
+ If the check fails \advv aborts.
+ Otherwise, denote $\prf = (\enc{\pi_A},\enc{\pi_B},\enc{\pi_D},\enc{\pi_K})$.
+ We again have
+ \[\alpha_A\cdot  \pi_A + \alpha_B \cdot \pi_B  = \pi_D\]
+ 
+ This implies by Lemma \ref{lem:batchPKE} that given $\alpha_A,\alpha_B$
+ and \advrand, \advv can extract e.w.p. \negl polynomials $A,B\in\F[X]$ of degree at most $n$ such that
+ \[\pi_A = A(\tau), \pi_B =B(\tau).\]
+
+ If one of the extractions failed, \advv aborts.
+ 
+ %From this point on, we slightly abuse notation and use $\tau,\beta_A,\beta_B,\delta$ to denote formal variables rather than values in \F.
+ \advv now computes the $4$-variate rational function
+ \[C(X,X_A,X_B,X_\delta)\defeq (A(X)B(X)+ X_A B(X) + X_B A(X) - \PI(X,X_A,X_B))/X_{\delta},
  \]
-If one of the four extractors failed \advv aborts.
-Define $\amid \defeq \sum_{i= n+1}^m a_i\cdot   A_i,\bmid \defeq \sum_{i= n+1}^m b_i\cdot B_i,
-\cmid \defeq \sum_{i= n+1}^m c_i\cdot C_i, R\defeq \sum_{i= n+1}^m k_i\cdot R_i $
-and 
-\[P\defeq (\abase+\amid)(\bbase+\bmid)-(\cbase+\cmid)\]
- Suppose \ext failed.
- This means that $a_{n+1},\ldots,a_m$ is not a valid QAP witness for $a_1,\ldots,a_n$.
-We claim there are only two cases where this happens.
-Define 
-\[R'\defeq \rho_A \amid + \rho_B \bmid + \rho_A\rho_B \cmid\]
+where $\PI(X,X_A,X_B)\defeq \sum_{i=0}^\ell x_i\cdot K_i(X,X_A,X_B)$.
+Rearranging the second verification equation we see that we have
+\[\pi_K = (\pi_A\pi_B +\beta_A\pi_B + \beta_B\pi_A -\PI(X))/\delta = C(\tau,\beta_A,\beta_B,\delta).\]
+
+Denote $U \defeq \span(\crs_1(X,X_A,X_B,X_\delta))\subseteq \F(X,X_A,X_B,X_\delta)$.
+If $C\notin U$, \advv outputs $(C,\enc{\pi_K})$ as a response to the $(4,2n)$-SPAN challenge.
+
+We show that when \prf is a valid proof but $C\in U$, then \ext outputs a valid witness:
+
+$C\in U$ implies there are polynomials $f,f_A,f_B,H\in \F[X]$ of degree at most $n$, together with coefficients $x_{\ell+1},\ldots,x_m \in \F$, such that
+\[(A(X)B(X)+ X_A B(X) + X_B A(X) - \PI(X,X_A,X_B))/X_{\delta}\]
+\[= f(X)+ f_A(X)+f_B(X)+H(X)Z(X)/X_{\delta}
++\left(\sum_{i=\ell+1}^m x_i\cdot  K_i(X,X_A,X_B)\right)/X_\delta.
+\]
+
+We multiply by $X_\delta$ and add $\PI(X,X_A,X_B)$ to get 
+\[A(X)B(X)+ X_A B(X) + X_B A(X)\]
+\[= (f(X)+ f_A(X)+f_B(X))X_\delta+H(X)Z(X)
++\sum_{i=0}^m  x_i\cdot  K_i(X,X_A,X_B).
+\]
+
+Let us think of the above as a polynomial indentity in the variables $X_A,X_B,X_\delta$ with coefficients in $\F[X]$.
+Since the constant coefficient, that of $X_A$ and that of $X_B$ must be identical on both sides, we have
 \begin{enumerate}
- \item $R'\notin V$.
- \item $P(X)$ is not divisble by $Z(X)$
+ \item $A(X)B(X)= \sum_{i=0}^m x_i\cdot C_i(X) + H(X)Z(X)$.
+ \item $B(X) = \sum_{i=0}^m x_i\cdot B_i(X)$.
+ \item $A(X) = \sum_{i=0}^m x_i \cdot A_i(X)$
 \end{enumerate}
-
-Suppose $R'\in V$. Hence there exist coefficients $\sett{x_i}{i\in [n+1..m]}$ such that
-\[\rho'_A X^{d+1} \amid + \rho_B X^{2(d+1)} \bmid + \rho_A\rho_B X^{3(d+1)}\cmid = \sum_i x_i\cdot (\rho'_A X^{d+1} A_i(X) + \rho'_BX^{2(d+1)} B_i(X) + \rho'_A\rho'_B X^{3(d+1)} C_i(X))\]
-Degree conditions imply $\amid = \sum_i x_i A_i,\bmid =\sum_i x_i B_i, \cmid = \sum_i x_i C_i$.
-%If $\set{a_i}=\set{b_i}=\set{c_i}$ 
-Since also $Z$ divides $P$ we have by definition that $x_{n+1},\ldots,x_m$  is a valid witness for $a_1,\ldots,a_n$.
-
-We show, on the other hand, that if one of the two conditions above doesn't hold and \advv hasn't aborted so far,
-then \advv has a valid solution to the $D$-span challenge where $D=2q$ and the subspace $V$ is $\span(1,X,\ldots,X^q,X^{q+2},\ldots,X^{2q})$.
-Suppose the first condition doesn't hold.
-Denote by $\eta$ the probability that the coefficient of $X^{q+1}$ in $R\cdot f$ is non-zero.
-Think of a party $B$ that recieves $(f(\tau),\tau)$ computes the rest of the CRS as \advv does here and then gives the challenge to \adv
-that w.p. $\eta$ returns a polynomial $R'$ of degree at most $3d+3$ such that $R'\cdot f$ has zero coefficient for $X^{q+1}$ but is not in $V$.
-Lemma 10 of \cite{GGPR} tells us $\eta\leq 1/|\F|$.
-Otherwise, as any polynomial with a non-zero coefficient for $X^{q+1}$ is not in $V$,\ advv can output $(R\cdot f,1,\enc{\pi_K})$ as a solution
-to $D$-span.
-In the second case $P/Z$ is not a polynomial. Recall that $\pi_H/(\rho_A\rho_B)=P(\tau)/Z(\tau)$ as the verification equations hold.
-Thus, \advv can output $(P,Z,\enc{\pi_H}/(\rho_A\rho_B))$ as a solution to $D$-span.                                                                
-Hence we have that the success probability of \advv is at least $\gamma-\negl-1/|\F|=\gamma-\negl$.
+This exactly means that $\wit\defeq (x_{\ell+1},\ldots,x_m)$ 
+is a valid witness for \inp.
+And \wit exactly corresponds to the output of \ext.
  
-%\section*{Acknowledgements}
-\bibliographystyle{alpha}
+ 
+ \section*{Acknowledgements}
+We thank Jens Groth and Mary Maller for helpful discussions on the subject of this paper.
+ \bibliographystyle{alpha}
 \bibliography{References}
 
 \end{document}
