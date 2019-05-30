@@ -1,0 +1,717 @@
+\def\notes{1}
+\documentclass[11pt]{article}
+%\usepackage[T1]{fontenc}
+%\usepackage[letterpaper]{geometry}
+%\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+%\usepackage{verbatim}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+%\usepackage{setspace}
+\usepackage{xspace}%,enumitem}
+%\usepackage{times}
+\usepackage{fullpage,array}
+%\usepackage{hyperref}
+%\doublespacing
+\usepackage{color}
+\usepackage{numdef}
+\usepackage{enumitem}
+\usepackage{amsopn}
+%\usepackage{hyperref} 
+\usepackage{mathrsfs}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{makecell}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}
+\providecommand{\sqbinom}{\genfrac{\lbrack}{\rbrack}{0pt}{}}
+\DeclareMathOperator{\spn}{span}
+
+\newif\ifdraft
+%\drafttrue
+\draftfalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+%\numberwithin{equation}{section} %% Comment out for sequentially-numbered
+\numberwithin{figure}{section} %% Comment out for sequentially-numbered
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{conjecture}[thm]{Conjecture}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{dfn}[thm]{Definition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{proposition}[thm]{Proposition}
+\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{fact}[thm]{Fact}
+\newtheorem{openprob}[thm]{Open Problem}
+\newtheorem{remk}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+\newtheorem{apdxlemma}{Lemma}
+\newcommand{\question}[1]{{\sf [#1]\marginpar{?}} }
+%\usepackage{babel}
+\usepackage{tikz}
+
+\makeatletter
+\newcommand*{\circled}{\@ifstar\circledstar\circlednostar}
+\makeatother
+
+\newcommand*\circledstar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      fill,
+      circle,
+      minimum size=1.35em,
+      text=white,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+\newcommand*\circlednostar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      draw,
+      circle,
+      minimum size=1.35em,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+
+\providecommand{\bd}[1]{\circled{#1}}
+
+
+%Eli's macros
+\newcommand{\E}{{\mathbb{E}}}
+%\newcommand{\N}{{\mathbb{N}}}
+\newcommand{\R}{{\mathbb{R}}}
+\newcommand{\calF}{{\cal{F}}}
+%\newcommand{\inp}[1]{\langle{#1}\rangle}
+\newcommand{\disp}[1]{D_{#1}}
+%\newcommand{\spn}[1]{{\rm{span}}\left(#1\right)}
+%\newcommand{\supp}{{\rm{supp}}}
+\newcommand{\agree}{{\sf{agree}}}
+\newcommand{\RS}{{\sf{RS}}}
+\newcommand{\aRS}{{\sf{aRS}}}
+\newcommand{\rrs}{R_{\aRS}}
+\newcommand{\VRS}{V_\RS}
+\newcommand{\x}{\ensuremath{\mathbf{x}}\xspace}
+\renewcommand{\max}{\ensuremath{\mathrm{\mathbf{max}}}\xspace}
+\newcommand{\summ}{\ensuremath{\sum_{i\in H}}\xspace}
+\newcommand{\summa}{\ensuremath{\sum_{a\in H}}\xspace}
+\renewcommand{\a}{\ensuremath{\mathbf{a}}\xspace}
+
+\newcommand{\X}{\ensuremath{\mathbf{X}}\xspace}
+\newcommand{\Y}{\ensuremath{\mathbf{Y}}\xspace}
+\newcommand{\y}{\ensuremath{\mathbf{y}}\xspace}
+
+\newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
+\newcommand{\angles}[1]{\langle{#1}\rangle}
+\renewcommand{\span}{\ensuremath{\mathsf{span}}\xspace}
+\newcommand{\condset}[2]{\set{#1 \mid #2 }}
+\newcommand{\zo}{\set{0,1}}
+\newcommand{\zon}{{\zo^n}}
+\newcommand{\zom}{{\zo^m}}
+\newcommand{\zok}{{\zo^}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\e}{\eps}
+%\newcommand{\d}{\delta}
+\newcommand{\poly}{\ensuremath{\mathrm{poly}(\lambda)}\xspace}
+\newcommand{\polylog}{\ensuremath{\mathrm{polylog}(\lambda)}\xspace}
+\newcommand{\itone}{{\it{(i)}}\xspace}
+\newcommand{\ittwo}{{\it{(ii)}}\xspace}
+\newcommand{\itthree}{{\it{(iii)}}\xspace}
+\newcommand{\itfour}{{\it{(iv)}}\xspace}
+\newcommand{\cc}{{\rm{CC}}}
+\newcommand{\rnk}{{\rm{rank}}}
+\newcommand{\T}{T}
+\newcommand{\I}{{\mathbb{I}}}
+\ifdraft
+\newcommand{\ariel}[1]{{\color{blue}{\textit{#1 --- ariel gabizon}}}}
+\else
+\newcommand{\ariel}[1]{}
+\fi
+\providecommand{\improvement}[1]{{\color{red} \textbf{#1}}}
+ \mathchardef\mhyphen="2D
+
+\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+%\newcommand{\G}{\ensuremath{{\mathbb G}}\xspace}
+\newcommand{\Gstar}{\ensuremath{{\mathbb G}^*}\xspace}
+
+\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+\newcommand{\grouppair}{\ensuremath{G^*}\xspace}
+
+\newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
+\newcommand{\F}{\ensuremath{\mathbb F}\xspace}
+\newcommand{\Fstar}{\ensuremath{\mathbb F^*}\xspace}
+
+\newcommand{\help}[1]{$#1$-helper\xspace}
+\newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
+\newcommand{\pair}[1]{$#1$-pair\xspace}
+\newcommand{\pairs}[1]{$#1$-pairs\xspace}
+
+\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+\newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
+\newcommand{\players}{\ensuremath{[n]}\xspace}
+\newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
+\newcommand{\advprime}{\ensuremath{{\mathcal A}'}\xspace}
+\newcommand{\extprime}{\ensuremath{E'}\xspace}
+\newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+
+\newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
+\renewcommand{\deg}{\ensuremath{\mathrm{deg}}\xspace}
+\newcommand{\pairvec}[1]{$#1$-vector\xspace}
+\newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
+\newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
+\newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
+\newcommand{\abase}{\ensuremath{A_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\bbase}{\ensuremath{B_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\cbase}{\ensuremath{C_{\mathrm{\mathbf{0}}}}\xspace}
+
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\bmid}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\cmid}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+
+\newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
+\newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
+\newcommand{\snark}{\ensuremath{\mathscr S}\xspace}
+\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
+
+\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
+\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+ \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+ \newcommand{\comm}[1]{\ensuremath{\mathsf{comm}_{#1}}\xspace}
+ \newcommand{\defeq}{:=}
+
+\newcommand{\A}{\ensuremath{\vec{A}}\xspace}
+\newcommand{\B}{\ensuremath{\vec{B}}\xspace}
+\newcommand{\C}{\ensuremath{\vec{C}}\xspace}
+\newcommand{\Btwo}{\ensuremath{\vec{B_2}}\xspace}
+\newcommand{\treevecsimp}{\ensuremath{(\tau,\rho_A,\rho_A \rho_B,\rho_A\alpha_A,\rho_A\rho_B\alpha_B, \rho_A\rho_B\alpha_C,\beta,\beta\gamma)}\xspace}% The sets of elements used in simplifed relation tree in main text body
+\newcommand{\rcptc}{random-coefficient subprotocol\xspace}
+\newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
+\newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
+\newcommand{\randadv}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+ \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
+ \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \newcommand{\pr}{\mathrm{Pr}}
+ \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+ \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+ \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+\newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
+\newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
+\newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
+\newcommand{\trapdoor}{\ensuremath{r}}
+\newcommand{\trapdoorext}{\ensuremath{r_{\mathrm{ext}}}\xspace}
+\newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
+
+\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
+\newcommand{\prv}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\prvpoly}{\ensuremath{\mathrm{P_{\mathsf{poly}}}}\xspace}
+\newcommand{\verpoly}{\ensuremath{\mathrm{V_{\mathsf{poly}}}}\xspace}
+\newcommand{\prf}{\ensuremath{\pi}\xspace}
+\newcommand{\simprv}{\ensuremath{\mathrm{P^{sim}}}\xspace}
+
+%\newcommand{\enc}[1]{\ensuremath{\left[#1\right]}\xspace}
+%\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbf{G^*}}\xspace}  % would have liked to call this G01 but problem with name
+\num\newcommand{\g0}{\ensuremath{\mathbf{g}}\xspace}
+\newcommand{\inst}{\ensuremath{\phi}\xspace}
+\newcommand{\inp}{\ensuremath{x}\xspace}
+\newcommand{\wit}{\ensuremath{\omega}\xspace}
+\newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
+\newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\sonic}{\ensuremath{\mathsf{Sonic}}\xspace}
+\newcommand{\aurora}{\ensuremath{\mathsf{Aurora}}\xspace}
+\newcommand{\rel}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\ext}{\ensuremath{E}\xspace}
+\newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
+\newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
+\num\newcommand{\p1}{\ensuremath{P_1}\xspace}
+\newcommand{\advv}{\ensuremath{ {\mathcal A}^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
+\newcommand{\crs}{\ensuremath{\sigma}\xspace}
+%\num\newcommand{\crs1}{\ensuremath{\mathrm{\sigma}_1}\xspace}
+%\num\newcommand{\crs2}{\ensuremath{\mathrm{\sigma}_2}\xspace}
+
+\renewcommand{\sim}{\ensuremath{\mathsf{sim}}\xspace}%the distribution of messages when \advv simulates message of \p1
+\newcommand{\real}{\ensuremath{\mathsf{real}}\xspace}%the distribution of messages when \p1 is honest and \adv controls rest of players
+ \newcommand{\koevec}[2]{\ensuremath{(1,#1,\ldots,#1^{#2},\alpha,\alpha #1,\ldots,\alpha #1^{#2})}\xspace}
+\newcommand{\mida}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\midb}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\midc}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+\newcommand{\chal}{\ensuremath{\mathsf{challenge}}\xspace}
+\newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
+\newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
+\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\ro}{\ensuremath{{\mathcal R}}\xspace}
+\newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
+ \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
+ \num\newcommand{\elmpowers2}[1]{\ensuremath{\mathrm{\mathsf{e}}^2_{#1}}\xspace}
+\newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
+ \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
+ \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+ \newcommand{\bivar}[1]{\ensuremath{\F_{< #1}[X,Y]}\xspace}
+ \newcommand{\sig}{\ensuremath{\mathscr{S}}\xspace}
+ \newcommand{\prot}{\ensuremath{\mathscr{P}}\xspace}
+ \newcommand{\sigprv}{\ensuremath{\mathsf{P_{sc}}}\xspace}
+ \newcommand{\sigver}{\ensuremath{\mathsf{V_{sc}}}\xspace}
+\newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
+\newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
+\newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
+\title{%
+Improved prover efficiency and SRS size in a Sonic-like system}
+\date{\today}
+\author{Ariel Gabizon\\ \tt{Protocol Labs} }
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Using ideas from the recent \aurora zk-STARK of Ben-Sasson et al.\ \cite{aurora}, we present a zk-SNARK with a universal and updatable SRS similar to the recent construction of Maller et al.\ \cite{sonic}, called \sonic.
+Compared to \sonic, our construction achieves significantly better prover run time (less than half) and smaller SRS size (one sixth). However, we only achieve amortized succinct verification time for batches of proofs, either when the proofs are generated in parallel or in \cite{sonic}'s helper setting, and our proofs are longer than those of \cite{sonic} (but still contain a \emph{constant} number of field and group elements).
+\end{abstract}
+
+
+\section{Introduction}
+Due to real-world deployments of zk-SNARKs, e.g. Zcash; it has become of significant interest to have the structured reference string (SRS) be constructible in a ``universal and updatable'' fashion. Meaning that the same parameters (a different term for the SRS) can be used for statements about all circuits/computations of a certain bounded size; and that at any point in time the parameters can be updated by a new party, such that the honesty of only one party from all updaters up to that point is required for soundness.
+A natural direction to achieve this, is by having an ``SRS of monomials'' meaning that the SRS consists solely of elements ${g^{x^i}}$ for a secret uniform $x$. Roughly speaking, such elements are easy to update as the new party can just raise them to power $s^i$ for their secretly chosen $s$.
+
+Maller et al.\ \cite{sonic} noticed that the polynomial commitment scheme of Kate, Zaverucha and Goldberg \cite{kate} is very helpful in this context, as such an SRS of monomials is sufficient in \cite{kate} to verifiably evaluate values of low-degree polynomials committed to by the prover - this being perhaps the main problem to be dealt with (without the luxury of an SRS) in PCP constructions using techniques such as low-degree testing (starting from \cite{BFL}) and PCP's of proximity \cite{BSS} (and in more modern works also IOP's of proximity \cite{BCGRS}).
+
+
+\paragraph{The Sonic approach}
+\cite{sonic}'s \sonic uses a variant of the arithmetization of Bootle et al.\ \cite{Bootle} to create a
+situation where a certain polynomial of the prover can have a zero constant coefficient only when the prover has a satisfying assignment. Roughly, this is achieved by using Laurent polynomials with both negative and positive powers, such that their product cancels out in the constant term only when a satisfying assignment was used to construct them.
+A lot of the ingenuity of \cite{sonic} is that though the polynomials from \cite{Bootle} are \emph{bi-variate}
+and \cite{kate} is only efficient for univariate polynomials (in the sense of linear time proving in the degree) they are able to maneuver in a way that only requires to commit and evaluate \emph{univariate restrictions} of the original bi-variates.
+However, using negative powers for the cancellation trick comes at a price
+%\footnote{Taking the product of such polynomials and moving from bi-variate to univariate are also costly, but the use of negative powers is the main thing}
+of having the polynomials ultimately plugged in to the \cite{kate} scheme  have a larger range of powers - roughly a $7n$ size range from  $-4n$ to $3n$
+(where $n$ is the number of multiplication gates in our circuit). Furthermore, \cite{sonic} need to put a ``hole'' in this range to disallow the constant coefficient, which doubles the SRS size.
+
+\emph{The main point is that the number of prover exponentiations and SRS size is directly tied to the size of this range when using \cite{kate}}. 
+\paragraph{The Aurora approach}
+Instead, we use a nice algebraic trick from the \aurora IOP\cite{aurora}. \cite{aurora} uses a lemma (Lemma \ref{lem:sumcoeff})
+connecting between the value of a polynomial's constant coefficient, and its sum on a multiplicative subgroup. Together with a randomized sum check arithmetization in the style of \cite{BCGRS,aurora}, this allows us to create a ``constant coefficient=0 iff prover has witness'' situation without using negative powers.
+This enables only dealing with (regular not Laurent) polynomials of degree at most $2n$; i.e.\ we have reduced the ``monomial range'' of \sonic from $7n$ to $2n$, and do not need to deal with a ``hole'' in this range disallowing a constant coefficient. Morever, all but one of the prover polynomials will have  degree at most $n$, which further helps reduce prover run time. On the other hand, we have five polynomials to deal with rather than two as in \cite{sonic}, which is why our proofs are longer than \sonic's.
+
+
+Before comparing performance with \cite{sonic} in more detail, we discuss the three settings in which both our construction and \sonic can be used.
+\subsection{The three modes of Sonic}\label{subsec:sonicmodes}
+The basic version of the \sonic verifier, as well as ours, is succinct (i.e.\ \polylog running time)
+\emph{except} for the need to evaluate a polynomial $s(X,Y)$ of $O(n)$ monomials.
+The evaluation of $s$ in \sonic is done once per proof, at a point $(z,y)$ chosen by the verifier during the protocol.
+There are three ways to deal with this evaluation.
+\paragraph{Parallel proof generation for a batch:}
+The crucial point is that the values $z,y$ are only revealed to the prover at certain points in the protocol; but beyond this, there is no dependence between the values $z,y$ and the specific statement proven - they just need to be uniform.
+It follows that if proofs are generated in parallel, e.g.\ in practice by posting the first part of all proofs on a blockchain and getting the random challenge $z$ afterwords and continuing similarly for $y$ - then the verifier can use the same $(z,y)$ for a whole batch of proofs and do the non-succinct $s$ evaluation only once per batch.\footnote{\cite{sonic} do not explicity discuss this mode, but we think it may be the most practical both for their construction and ours.}
+Our construction also has the property that the non-succinct verifier computations can be done only once per batch.
+\ariel{compute exact cost of computing $Q$}
+
+\paragraph{Arbitrary batching using an untrusted helper:}
+\cite{sonic} develop a method where a batch of evaluations \sett{s(z_j,y_j)}{j\in [m]}
+can be performed by an untrusted helper and a proof can be given to the verifier that the evaluations are all correct. Verification of this proof only requires \emph{one evaluation of $s$}. Hence, using this ``helper mode'' we can verify an arbitrary batch of proofs generated without any synchronization, with a non-succinct operation done only once per batch. This mode incurs the cost of needing such a helper, and adding the evaluation $s(z_j,y_j)$ and proof of correct evaluation, which increase the proof size.
+Our scheme can also leverage the \sonic helper, however with larger cost to proof size as we have six polynomials per proof that need to be evaluated by the verifier instead of one.
+See details in Section \ref{sec:helpedver}.
+\paragraph{Fully succinct mode:}
+\cite{sonic} in fact manage to design a proof system that allows a fully succinct (i.e. not just in the amortized sense) verifier to verify that the evaluation $s(z,y)$ is correct. However, their fully succinct mode requires significant increase of the constants in  proof size, proving and verification time and may be less practical.
+Our construction does not currently support this mode, but it seems possible an extension to this mode can be done.
+We pose this as an open question with more details in Section \ref{sec:succinctver}.
+
+\subsection{Our results compared to \cite{sonic}}
+\newcommand{\obgen}{\ensuremath{\mathcal O}\xspace}
+
+We compare the performance of \sonic to our system when generating proofs for arithmetic circuits with $n$ multiplication gates, or analogously, an R1CS system with $n$ constraints.
+Motivated by the discussion in Section \ref{subsec:sonicmodes} about settings of batched proofs - we omit from the tables the once per batch computations of the verifier. These are similar in \sonic and our system and are linear in the circuit size.
+
+The first two columns in Table $1$ describe SRS size when only knowing a bound $d$ on the circuit size/number of R1CS constraints; and then the reduced size possible to work with when knowing the exact size $n$ of the circuit.
+
+When describing proof sizes, we separate between the elements from the prover in the parallel generation setting, and the additional elements from the helper in the helped setting.
+
+We omit $O(1)$ factors. For example, in the fixed circuit size SRS size, we omit the constant number of \G2 elements needed in the SRS both in \sonic and our system. We also mention that adding zero-knoweldge increases by a small constant the number of prover exponentiations both in our system, and it seems, in \sonic.
+
+In a nutshell, our construction has better prover run time and SRS size; while \sonic has smaller proofs, less auxiliary data and extra verifier work in helper mode, and a fully succinct verifier mode. Thus, the advantage of this work is most prominent in the parallel proof generation setting.
+
+
+\begin{table}[ht]
+\caption{Prover comparison}
+\centering
+\begin{tabular}{l|l|l|l|l}
+                     & \thead{size $\leq d$\\ SRS} & \thead{size $=n$\\ SRS} & \thead{prover\\ work} & \thead{proof\\ length}  \\ \hline
+\sonic           &  $12d$ \G1, $12d$ \G2 &   $12n$ \G1    &   $18n$ \G1 exp &  $4$ \G1, $2$ $\F$             \\        \hline
+This work &  $2d$ \G1, $2d$ \G2  &      $2n$ \G1  &   $8n$ \G1 exp  &   $6$ \G1, $5$ \F     \\     \hline
+\end{tabular}
+\end{table}
+
+
+ \begin{table}[ht]
+ \caption{Verifier comparison per proof in batch, $P$=pairing}
+\centering
+ \begin{tabular}{l|l|l|l|l}
+                      &  \thead{verifier\\ work} & \thead{elem. from\\ helper} & \thead{extra verifier \\ work in\\ helper mode} &\thead{fully succinct\\ ver. mode?}\\ \hline
+ \sonic           &   $5P$  &  $3$ \G1, $1$ \F  & $4P$ & Yes         \\        \hline
+ This work &  $5P$  &  $14$ \G1, $4$ \F & $20P$  & No \\     \hline
+ \end{tabular}
+ \end{table}
+ 
+
+ \subsection{Organization of paper}
+ Section \ref{sec:terminology} contains terminology we will use. Section \ref{sec:kate} contains an adaptation of the \cite{kate} scheme similar to that of \cite{sonic} that we will use. Section \ref{sec:main} contains our main construction assuming a polynomial commitment scheme as a black box.
+ Section \ref{sec:helpedver} shows how to adapt the \sonic helper mode to our construction. Section \ref{sec:zk} shows how to add zero-knoweldge to our construction. Section \ref{sec:succinctver} discusses a possible extension to get a fully succinct verifier.
+ 
+\section{Terminology/conventions}\label{sec:terminology}
+We assume our field \F is of prime order.
+%We assume we have a
+%multiplicative subgroup $H \subset F$ of size $|H| = n$ where $n$ is the number of constraints in our R1CS.
+%and denote for simplicity the elements of H as H = {1, . . . , m}.
+%We assume the number of private variables n is equal to m.
+We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than d. 
+We assume all algorithms described receive as an implicit parameter the security parameter $\lambda$.
+
+Whenever we use the term “efficient”, we mean an algorithm running in time \poly. Furthermore,
+we assume an “object generator” \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G1, \G2, \Gt, e, g_1, g_2,g_t)$ where
+\begin{itemize}
+\item \F is a prime field of super-polynomial size $r = \lambda^{\omega(1)}$
+.
+\item $\G1,\G2,\Gt$ are all groups of size $r$, and $e$ is an efficiently computable non-degenerate pairing
+$e : \G1 \times \G2 \to \Gt$.
+\item $g_1,g_2$ are uniformly chosen generators such that $e(g_1, g_2) = g_t$.
+\end{itemize}
+We usually let the $\lambda$ parameter be implicit, i.e.\ write \F instead of $\F(\lambda)$.
+We write \G1 and \G2 additively. We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
+% For example, when we refer below to the field $\F$, it is in fact a function $\F(\lambda)$ of $\lambda$, and part of
+% the output of $\obgen(\lambda)$.
+
+
+
+
+\paragraph{Random oracles}
+We describe public-coin interactive protocols between a prover and verifier; when deriving results for non-interactive protocols,
+we implicitly assume we can get a proof length equal to the total communcation of the prover, using the Fiat-Shamir transform/a random oracle. Using this reduction between interactive and non-interactive protocols, we can refer to the ``proof length'' of an interactive protocol.
+
+
+\section{The \cite{kate} scheme as used in \sonic}\label{sec:kate}
+We recall the \cite{kate} scheme with two enhancements of \cite{sonic} that will be important for us: The first is enabling a commitment to all degrees up to a certain size, rather than just the maximal degree. The second is ``batch openings'' of several polynomials at the same point $z\in \F$.
+We define a polynomial commitment scheme with these enhancements in mind.
+\newcommand{\srs}{\ensuremath{\sigma}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
+\newcommand{\cm}{\ensuremath{\mathsf{cm}}\xspace}
+\newcommand{\open}{\ensuremath{\mathsf{open}}\xspace}
+%\newcommand{\gen}{\ensuremath{\mathsf{gen}}\xspace}
+\begin{dfn}\label{dfn:PCscheme}
+A $d$-polynomial commitment scheme consists of 
+\begin{itemize}
+ \item $\gen(d)$- is a randomized algorithm that outputs an SRS \srs.
+ \item $\com(f,\max,\srs)$- that given a polynomial $f\in \polysofdeg{\max}$, where $\max\leq d$, returns a commitment \cm to $f$.
+ \item A public coin protocol  \open between parties \prvpoly and \verpoly. \prvpoly is given $ f_1,\ldots,f_t \in \polysofdeg{d}$. \prvpoly and \verpoly are both given integer $t=\poly$, $\cm_1,\ldots,\cm_t$ - the alleged commitments to $f_1,\ldots,f_t$, integers $0< d_1,\ldots,d_t \leq d$, $z\in\F$ and $s_1,\ldots,s_t\in \F$ - the alleged correct openings $f_1(z),\ldots,f_t(z)$. At the end of the protocol \verpoly outputs \acc or \rej. 
+\end{itemize}
+such that
+\begin{itemize}
+ \item \textbf{Completeness:} Fix integer $t$, $z\in \F$, $f_1,\ldots,f_t \in \polysofdeg{d}$ and $0< d_1,\ldots,d_t\leq d$
+ such that $\deg(f_i)<d_i$.
+ Suppose that for each $i\in [t]$, $\cm_i = \com(f_i,d_i,\srs)$.  Then if \open is run correctly with values
+ $t,z, \sett{\cm_i,d_i,f_i(z)}{i\in [t]}$, \verpoly outputs \acc with probability one.
+ \item \textbf{Knowledge soundness in the generic group model:} There exists an efficient \ext such that for any efficient generic group model adversary \adv and arbitrary efficient \advprime, the probability of $(\adv,\advprime)$ winning the following game is \negl over the randomness of $(\adv,\advprime)$ and \gen.
+ \begin{enumerate}
+  \item Given \srs, \adv outputs $t,\cm_1,\ldots,\cm_t$.
+  \item \ext, given access to the state of \adv outputs $f_1,\ldots,f_t \in \polysofdeg{d}$.
+  \item \advprime outputs $0< d_1,\ldots,d_t \leq d$, $s_1,\ldots,s_t \in \F,z \in \F$.
+  \item \advprime takes the part of \prvpoly in the protocol \open with inputs
+  $\cm_1,\ldots,\cm_t,d_1,\ldots,d_t,s_1,\ldots,s_t$.
+  \item $(\adv,\advprime)$ wins if 
+  \begin{itemize}
+   \item \ver outputs \acc at the end of the protocol.
+   \item For some $i\in [t]$, $s_i\neq f_i(z)$ or $\deg(f_i)\geq d_i$.
+  \end{itemize}
+
+ \end{enumerate}
+
+\end{itemize}
+\end{dfn}
+We describe the following scheme based on \cite{kate,sonic}.
+It is in fact a slightly simpler scheme than in \cite{sonic} because, as explained in the introduction, there is no need to deal with holes in the allowed range of degrees.
+\begin{enumerate}
+ \item $\gen(d)$ - choose uniform $x\in \F$. Output $\srs =(\enc1{1},\enc1{x},\ldots,\enc1{x^{d-1}},\enc2{1},\enc2{x^{-1}},\ldots,\enc2{x^{-(d-1)}})$.
+ \item $\com(f,d',\srs) \defeq \enc1{x^{d-d'}\cdot f(x)}$.
+ \item $\open(\set{cm_i},\set{d_i},\set{s_i},z)$
+ \begin{enumerate}
+  \item \verpoly sends random $\gamma\in \F$.
+ \item \prvpoly computes the polynomial
+ \[h(X)\defeq \sum_{i=1}^t \gamma^{i}\cdot \frac{f_i(X)-f_i(z)}{X-z}  \]
+ and using \srs computes and sends $W\defeq \enc1{h(x)}$.
+% \[]
+ \item\label{step:computeW} \verpoly computes the elements 
+ \[F\defeq \prod_{i\in [t]}e\left(\gamma^{i} \cdot \cm_i, \enc2{x^{d_i-d}} \right), v\defeq \enc1{\sum_{i\in [t]} \gamma^{i}\cdot s_i}\]
+ \item \verpoly computes outputs \acc if and only if
+ \[ F= e\left(v- z\cdot W,\enc2{1}\right )\cdot e(W,\enc2{x} ). \]
+ \end{enumerate}
+
+\end{enumerate}
+Note that $|\srs| = 2d$ in the above scheme.
+\emph{However}, a crucial point is that once we fix $\ell$ values from which we will always choose \set{d_1,\ldots,d_t},
+we can work with a subvector of \srs of size $d+\ell$. In our SNARK, given a circuit size, we will only need $\ell=3$ of the \G2 values from $\sigma$ in our SRS.
+
+
+The following is implied almost directly by Theorem 6.1 and Appendix C.1 of  \cite{sonic}. We leverage that the pairings in step \ref{step:computeW} can batched for indices $i,j$ such that $d_i=d_j$.
+\begin{lemma}\label{lem:pcSCHEME}
+Fix any $d$ and assume the $d$-power bi-linear Strong Diffie Hellman assumption holds.
+ Then the above scheme is a $d$-polynomial commitment scheme such that
+ \begin{enumerate}
+  \item \prvpoly requires \max \G1 exponentiations for computing $\com(f,\max,\srs)$.
+  \item \prvpoly requires $\sum_{i=1}^t O(d_i)$ field operations and  $\sum_{i=1}^t d_i$ exponentiations for computing $\open(\sett{cm_i}{i\in [t]},$ $\sett{d_i}{i\in [t]},\sett{s_i}{i\in [t]},$ $z)$.
+\item \verpoly requires $t^*+2$ pairings, where $t^*$ is the number of distinct values amongst $d_1,\ldots,d_t$.
+  \end{enumerate}
+
+\end{lemma}
+
+
+\section{The main construction}\label{sec:main}
+We begin by converting R1CS to a format that is convenient for us.
+We denote by $n$ the number of private inputs and the number of constraints which we assume our equal (can be achieved by adding dummy variables or constraints if needed).
+We denote by $\ell$ the number of public inputs; and define $N\defeq n+\ell$.
+We assume the first $n$ variables correspond to the private inputs.
+
+We assume we have a multiplicative subgroup $H\subset \F$ of size $n$.
+Somewhat confusingly, it will be convenient to identify the elements of $H$ with the integers $\set{0,1,\ldots,n-1}$ when using them as exponents.
+
+\paragraph{Tweaking r1cs to our format}
+Our original R1CS consists of the constraints:\\
+For all $i\in [n]$
+\[(a_i\cdot x)(b_i\cdot x) - (c_i\cdot x) = 0,\]
+where $\cdot$ denotes inner product of vectors of length $N$. We modify the system to “flatten” linear combinations to variables. That is, we add two vectors of variables $y, z\in  \F^n$ and look at the following system with $3n$ constraints:\\
+\noindent
+For all $i\in [n]$
+\begin{enumerate}
+\item  $y_i\cdot z_i - (c_i\cdot x) = 0$.
+\item $y_i - (a_i\cdot x) = 0$.
+\item $z_i - (b_i\cdot x) = 0$.
+\end{enumerate}
+Note that above $y_i, z_i\in\F$ but $a_i,b_i,c_i,x \in\F^N$.
+Similarly to the original system, we call
+$x_n+1, . . . , x_N$ the public variables of this system, and all other variables private variables.
+% When we say in the protocol description that the prover commits to a polynomial in \polyofdeg{d} for some $d$, we mean in particular there is an independently generated Kate SRS for that $d$. We will
+% end up needing three of these for d = 2n, d = n, d = n − 1.
+
+\paragraph{A lemma about sums on subgroups}
+We use the following fact mentioned in Remark 5.6 in \cite{aurora} that is crucial to the \aurora system, as well as ours:
+\begin{lemma}\label{lem:sumcoeff}
+Fix any $f\in\polysofdeg{n}$. Then for any multiplicative subgroup $H\subset \F$ with $|H| = n$,
+\[\summa f(a) = 0\]
+if and only if $f$ has a zero constant term. 
+\end{lemma}
+
+\subsection{The main protocol}
+When describing the protocol we assume we have a $2n$-polynomial commitment scheme as defined in Section \ref{sec:kate}.
+
+\paragraph{Step 1: prover commiting to witness}
+The prover \prv starts by computing three polynomials representing the satisfying assignment $(x, y, z) \in\F^{3n}$ of the private variables. Specificaly, polynomials $W, Y, Z \in \polysofdeg{n}$, such that for each $i\in H$,
+$W(i) = x_i$, $Y (i) = y_i$, and $Z(i) = z_i$.
+\prv sends polynomial commitments to $W, Y, Z$, with parameter $\max=n$, to the verifier \ver.
+\paragraph{Step 2: verifier choosing a challenge; prover and verifier reducing to sumcheck}
+\ver chooses random $r, r',r'' \in \F$ which it sends to \prv.
+They both now independently reduce the satisfiability check to a sum check as follows:
+Look at the sum
+\[\summ r^i(y_iz_i - c_i\cdot x) + \summ r'^i(y_i - a_i\cdot x) + \summ r''^i(z_i - b_i
+\cdot x).\]
+Note that the sum is always zero for a satisfying assignment, and non-zero e.w.p $n/|\F|$ over $r, r', r''$ for a non-satisfying one.
+Rearrange the sum as
+\[\summ r^iy_iz_i +\summ r'^iy_i +\summ r''^i z_i +\summ \alpha_ix_i + \alpha_0\]
+where $\alpha_i$ is a coefficient containing some polynomial expression in $r, r'
+, r'',$  $\set{a_{i,j} , b_{i,j} , c_{i,j}}$; and also
+the public inputs $x_{n+1}, . . . , x_N$ in the case of $\alpha_0$.
+Now compute $R, R', R'', Q \in \polysofdeg{n}$, such that for $i \in [n], R(i) = r^i
+, R'(i) = r'^i
+, R''(i) =r''^i
+, Q(i) = \alpha_i.$
+Define the polynomial $D \in \polysofdeg{3n}$.
+
+\[D \defeq R \cdot Y \cdot Z + R'\cdot Y + R''\cdot Z + Q \cdot W + \alpha_0/n.\]
+Our sum above becomes
+\[\summ D(i).\]
+We have thus reduced our problem to a polynomial sumcheck. To be able to use Lemma \ref{lem:sumcoeff}, as in \cite{aurora}, we use polynomial division.
+
+Let $Z_H(X) \defeq \prod_{a\in H}(X - a)=X^n-1$.
+\prv computes $g \in \polysofdeg{2n}, f \in \polysofdeg{n-1}$ such that
+\[D(X) = g(X) \cdot Z_H(X) + X \cdot f(X).\]
+Note that from polynomial division combined with Lemma \ref{lem:sumcoeff} if the sum vanishes - such $f, g$
+indeed exist.
+\prv sends commitments of $g$ with parameter $\max=2n$ and $f$ with parameter $\max=n-1$ to \ver.
+\paragraph{Step 3: Verifier verifying the sumcheck by opening commitments and checking a
+polynomial identity}
+Note that if $g$ and $f$ are well-formed in the sense that indeed $D(X) =
+g(X) \cdot Z_H(X) + X \cdot f(X)$, then $D(a) = a \cdot f(a)$ for any $a \in H$. In such a case it thus suffices that
+\ver check that
+\[\summa a \cdot f(a) = 0.\]
+However, since $\deg(f) < n - 1$ is guaranteed by the commitment scheme, we have that $f'(X) \defeq X \cdot f(X)$ is a polynomial of degree $< n$ with zero constant coefficient; therefore the sum vanishes
+by Lemma \ref{lem:sumcoeff}.
+Hence, \ver need only check that indeed
+$D = g \cdot Z_H + X \cdot f$.
+
+For this purpose, \ver chooses a random $z\in \F$ and asks for the openings $Y (z), Z(z), W(z), g(z), f(z)$. Using  $Y(z),Z(z),W(z)$ together with $R(z), R'(z), R''(z), Q(z), \alpha_0$ that it can compute by itself, \ver computes $D(z)$. Now \ver checks if
+\[D(z) = g(z) \cdot Z_H(z) + z \cdot f(z),\]
+and outputs \acc if and only if the equality holds.
+Using Schwartz-Zippel, the probability of a false assignment leading to acceptance (via this identity or a bad choice of $r, r', r''$ above) is at most $4n/|\F|$.
+
+\subsection{Protocol summary}
+For convenience, we summarize the main protocol steps deferring to the more detailed description above for missing details.
+
+\begin{enumerate}
+ \item \prv sends $\cm(W,n,\srs),\cm(Y,n,\srs),\cm(Z,n,\srs)$ to \ver.
+ \item\label{step:ver1} \ver chooses random $r,r',r''\in \F$ and sends them to \prv. They both derive the polynomials $R,R',R''$.
+ \item \prv computes $D$. \prv computes $f\in \polysofdeg{n-1},g\in \polysofdeg{2n}$ such that $D(X)=g(X)\cdot Z_H(X) + X\cdot f(X)$.
+ \item \prv sends $\cm(g,2n,\srs), \cm(f,n-1,\srs)$ to \ver.
+ \item\label{step:ver2} \ver sends chooses random $z\in \F$ and sends $z$ to \prv.
+ \item \prv sends $s_W = W(z),s_Y= Y(z),s_Z = Z(z),s_f = f(z),s_g = g(z)$ to \ver.
+ \item  \prv and \ver engage in the protocol $\open(5,\set{n,n,n,n-1,2n},\set{W,Y,Z,f,g},\set{s_W,s_Y,s_Z,s_f,s_g})$. \ver outputs \rej if the protocol verifier did.
+ \item\label{step:ver3} \ver computes the alleged value of $D(z)$, as 
+ \[s_D\defeq R(z)s_Y s_Z + R'(z)s_Y+ R''(z)s_Z+ Q(z)s_W + \alpha_0  \]
+and outputs \acc if and only if \[s_D = s_g \cdot Z_H(z) + z \cdot s_f.\]
+ 
+\end{enumerate}
+
+
+\paragraph{Parallel proof generation}
+Parallel proof generation with efficient amortized verification, as mentioned in Section \ref{subsec:sonicmodes}, is achieved by running most steps separately for each public input, but jointly in steps \ref{step:ver1} and \ref{step:ver2}, i.e.\ use the same verifier randomness $r,r',r'',z$ for all proofs. When this is done the values $R(z),R'(z),R''(z),Q(z)$ can be computed just once for all proofs in step \ref{step:ver3}.
+
+
+
+\section{Batching arbitrary proofs with the Sonic helper}\label{sec:helpedver}
+As in \cite{sonic}, the heavy/non-succinct part of the verifier computation is evaluating polynomials whose size is as large as the circuit/number of R1CS constraints.
+\sonic has a clever solution for this\footnote{In fact, two different solutions for this and we'll discuss the second in Section \ref{sec:succinctver}.} - using an untrusted helper. The helper computes the polynomial evaluations for the verifier,
+and is able to prove the evaluations are correct. This is what \cite{sonic} call a \emph{signature of correct computation}.
+\begin{dfn}\label{dfn:batchsigs}
+  A protocol \prot between two-parties $(\sigprv,\sigver)$ is a  \emph{$(m,d)$-signature of correct computation} ($(m,d)$-SCC) if, when both parties are given $s\in \bivar{d}$ and a sequence of values $S=\sett{(z_j,y_j,s_j)\in \F^3}{j\in [m]}$, \sigver ends up outputting a value $\res\in \set{\acc,\rej}$ such that 
+%   
+%   \begin{itemize}
+%    \item Given a bi-variate polynomial $s\in \bivar{d}$ and a sequence , \sigprv generates a proof \prf.
+%    \item Given the same inputs together with \prf, \sigver outputs $\res\in \set{\acc,\rej}$
+%   \end{itemize}
+% such that
+\begin{enumerate}
+ \item \textbf{Completenss:} If for every $j\in [m], s_j = s(z_j,y_j)$,
+ and $(\sigprv,\sigver)$ follow the protocol then
+ $\sigver(s,S,\prf)=\acc$ with probability one.
+ \item \textbf{Soundness:} For any efficient generic group adversary \adv playing the part of \sigprv, if for some $j\in [m]$
+ $s_j \neq s(z_j,y_j)$, then the probability that
+ \[\sigver(s,S,\adv(s,S))=\acc\]
+ is \negl.
+\end{enumerate}
+
+\end{dfn}
+
+
+\cite{sonic} show the following.
+\begin{lemma}\label{lem:sonicSCC}
+ Fix integers $m,d$.
+ There is a pubic coin $(m,d)$-SCC such that,
+ when denoting by $m^*$ the number of distinct values amongst $\set{y_1,\ldots,y_m}$ (where $S=\sett{s_j,z_j,y_j}{j\in [m]}$ is the input to the protocol);
+ \begin{itemize}
+  \item the total prover communication in the protocol consists of $2m^* + m+2$ \G1 elements and $m^*+1$ field elements. 
+  %Sonic write 3m+1 G elems - but seem to forget you need to both open and commit to C
+  \item The verifier computation consists of one evaluation of $S$ and $2m^* +2m+2$ pairings.
+\item The SRS required for the scheme is the same as that of the $d$-polynomial commitment scheme described in Section \ref{sec:kate}.
+  \end{itemize}
+
+\end{lemma}
+
+
+Let us see how Lemma \ref{lem:sonicSCC} helps us improve verifier efficiency in the batch helped model:
+The heavy verifier computations - meaning those linear instead of polylogarithmic in the number of constraints - are the evaluation at the point $z$ of the polynomials $Q,R,R',R''$.
+Recall that $R,R',R''$ were defined by a random choice of $r\in \F$.
+We could in fact think of them all as \emph{bi-variate} polynomials evaluated at $(r,z)$ ($R',R''$ are the same bi-variate polynomial as $R$ when viewed this way); we claim that as bivariate polynomials they are all members of \bivar{n} when viewed this way:
+Let \sett{L_i \in \F[Y]}{i\in H} be the Lagrange basis with respect to $H$.
+That is, $L_i$ is the unique polynomial of degree less than $n$ with 
+$L(i)=1$ and $L(j)=0$ for $i\neq j \in H$.
+Now, we can see that 
+\[R(X,Y)=\summ X^i\cdot L_i(Y)\]
+Similarly, $Q$ was defined by a random choice of $r,r',r''\in \F$ and thus can be thought of as a sum of three bivariates $Q_1,Q_2,Q_3$
+with
+\[Q_j(X,Y) = \summ \alpha_{i,j}(X)\cdot L_i(Y)\]
+for some $\alpha_{i,j}(X)\in \polysofdeg{n}$, such that the total number of non-zero coefficients in \set{alpha_{i,j}(X)} is bounded by the number of wires in the circuit we constructed the R1CS from; hence we can assume it is $O(n)$.
+
+What will be important for us is that given $z\in \F$ the values \sett{L_i(z)}{i\in H},
+can be computed in at most $O(n)$ field operations. (As $L_i(Y)=\frac{Y^n-1}{Y-i}\cdot\frac{i-1}{i^n-1}$ )
+
+Thus, a helper can use the protocol of Lemma \ref{lem:sonicSCC}, with $s=Q_1,Q_2,Q_3,R$  to compute
+$Q(r,r',r'',z),$ $R(r,z),R(r',z),R(r'',z)$ for \ver and convince him the values are correct. We can leverage the separation between $m$ and $m^*$ in Lemma \ref{lem:sonicSCC} to save some helper elements and pairings per proof, as
+we are evaluating $R$ three times with the same $z$ value in the $Y$ coordinate.
+In total, for a batch of $t$ proofs, the helper mode adds $14t+8$ \G1 elements and $4t+4$ field elements to the proofs,
+and $20t+8$ pairing operations to the verifier.
+But now requiring the verifier to only perform $O(n)$ field operations to compute the polynomials $Q_1,Q_2,Q_3,R$ at a single point, (instead of $O(n\cdot t)$ without the helper).
+
+
+
+\section{Getting zero-knowledge}\label{sec:zk}
+We sketch how to add zero-knowledge to our scheme.
+The information given by the prover is limited to two evaluations of 
+the polynomials $W,Y,Z,f,g$ (one evaluation in the exponent during commitment, and one during opening).
+We need these evaluations not to leak any information.
+Note first that when the prover is honest, the evaluations of $g$ are a function of the previous ones determined by the verifier equation.
+Thus, it is enough to show the evaluations of $W,Y,Z,f$ don't leak information.
+
+The natural method in such cases see e.g. \cite{GGPR,BCGV,aurora},
+is to add to the polynomials random multiples of $Z_H$. This doesn't completely work in our case as $f$ is the result of a modulu $Z_H$ operation that would neutralize this randomization.\footnote{\cite{aurora} has a very similar problem, that is more complex as their proof is a function, specifically the RS-IOPP part, of much more evaluations of $f$.}
+So, we must take a slightly more cumbersome ``two-layered'' randomization approach:
+
+We assume the last two indices $x_{n-2},x_{n-1}, y_{n-2},y_{n-1},z_{n-2},z_{n-1}$
+of $x,y,z$ do not participate in any constraints (this can be achieved by padding the original R1CS with two unused variables).
+Let $H_0\defeq H\setminus\set{n-2,n-1}$.
+
+The prover \prv will choose six random degree one polynomials 
+$L^0_W,L^1_W, L^0_Y,L^1_Y,L^0_Z,L^1_Z$
+and define 
+\begin{itemize}
+ \item $W'\defeq W+L^0_W Z_{H_0}+L^1_W Z_H$.
+ \item $Y'\defeq Y+L^0_Y Z_{H_0}+L^1_Y Z_H$.
+ \item $Z'\defeq Z+L^0_Z Z_{H_0}+L^1_Z Z_H$.
+\end{itemize}
+\prv will conduct the protocol with $W',Y',Z'$ instead of $W,Y,Z$.
+We claim this results in a zero-knowledge protocol.
+
+
+Note first that $W',Y',Z'$ satisfy the R1CS constraints when $W,Y,Z$ did
+as they conicide on $H_0$.
+
+Also, fixing any $\tau,z\in \F$;
+The twelve values $W'(\tau),W'(z),(W' \;mod\; Z_H)(\tau), (W' \;mod\; Z_H)(z),$ $Y'(\tau),Y'(z),(Y' \;mod\; Z_H)(\tau), (Y' \;mod \;Z_H)(z),$ $Z'(\tau),Z'(z),(Z' \;mod\; Z_H)(\tau), (Z' \;mod\; Z_H)(z)$
+are all uniform and independent.
+
+Thus, the two evaluations of $W',Y',Z'$ give no information.
+The two evaluations of $f$ are a function of the verifier randomness together with the evaluations at $\tau,z$ of $(W' \;mod\; Z_H),(Y' \;mod\; Z_H),$ $(Z' \;mod\; Z_H)$,
+which can thus be simulated by chosing the latter evaluations independently and uniformly and computing $f$ from them.
+
+\section{Open question: getting a fully succinct verifier}\label{sec:succinctver}
+\cite{sonic} give a $(1,d)$-SCC where the run time of \sigver is polylogarithmic in $d$; i.e.\ the verifier is fully succinct, in the following restricted case.
+The polynomial $s(X,Y)$ can be written as a sum of a constant number of polynomials of the form
+\[\sum_{i\in [d]} a_iX^i Y^{\sigma(i)}\]
+where $\sigma$ is a permutation of $[d]$.
+Our polynomials $Q_1,Q_2,Q_3,R$ from Section \ref{sec:helpedver} are not of this form.
+However, it seems plausible the construction can be made to work while changing the polynomials into this form.
+
+
+ \section*{Acknowledgements}
+We thank Mary Maller for sharing details of the \cite{sonic} construction, even while it was a work in progress, which inspired and motivated this work. We thank Sean Bowe for discussions on \sonic.
+
+ \bibliographystyle{alpha}
+\bibliography{References}
+
+\end{document}
+ 
