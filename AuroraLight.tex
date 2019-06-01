@@ -277,7 +277,7 @@
 \newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
 \newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
 \title{%
-Improved prover efficiency and SRS size in a Sonic-like system}
+$\mathsf{AuroraLight}$: Improved prover efficiency and SRS size in a Sonic-like system}
 \date{\today}
 \author{Ariel Gabizon\\ \tt{Protocol Labs} }
 \date{}
@@ -470,7 +470,7 @@ Note that $|\srs| = 2d$ in the above scheme.
 we can work with a subvector of \srs of size $d+\ell$. In our SNARK, given a circuit size, we will only need $\ell=3$ of the \G2 values from $\sigma$ in our SRS.
 
 
-The following is implied almost directly by Theorem 6.1 and Appendix C.1 of  \cite{sonic}. We leverage that the pairings in step \ref{step:computeW} can batched for indices $i,j$ such that $d_i=d_j$.
+The following is implied almost directly by Theorem 6.1 and Appendix C.1 of  \cite{sonic}. We leverage that the pairings in step \ref{step:computeW} can be batched for indices $i,j$ such that $d_i=d_j$.
 \begin{lemma}\label{lem:pcSCHEME}
 Fix any $d$ and assume the $d$-power bi-linear Strong Diffie Hellman assumption holds.
  Then the above scheme is a $d$-polynomial commitment scheme such that
