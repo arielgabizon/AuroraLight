@@ -357,7 +357,7 @@ In a nutshell, our construction has better prover run time and SRS size; while \
 \begin{tabular}{l|l|l|l|l}
                      & \thead{size $\leq d$\\ SRS} & \thead{size $=n$\\ SRS} & \thead{prover\\ work} & \thead{proof\\ length}  \\ \hline
 \sonic           &  $12d$ \G1, $12d$ \G2 &   $12n$ \G1    &   $18n$ \G1 exp &  $4$ \G1, $2$ $\F$             \\        \hline
-This work &  $2d$ \G1, $2d$ \G2  &      $2n$ \G1  &   $8n$ \G1 exp  &   $6$ \G1, $5$ \F     \\     \hline
+This work &  $2d$ \G1, $2d$ \G2  &      $2n$ \G1  &   $8n$ \G1 exp  &   $6$ \G1, $4$ \F     \\     \hline
 \end{tabular}
 \end{table}
 
@@ -367,8 +367,8 @@ This work &  $2d$ \G1, $2d$ \G2  &      $2n$ \G1  &   $8n$ \G1 exp  &   $6$ \G1,
 \centering
  \begin{tabular}{l|l|l|l|l}
                       &  \thead{verifier\\ work} & \thead{elem. from\\ helper} & \thead{extra verifier \\ work in\\ helper mode} &\thead{fully succinct\\ ver. mode?}\\ \hline
- \sonic           &   $5P$  &  $3$ \G1, $1$ \F  & $4P$ & Yes         \\        \hline
- This work &  $5P$  &  $14$ \G1, $4$ \F & $20P$  & No \\     \hline
+ \sonic           &   $5P$  &  $3$ \G1, $2$ \F  & $4P$ & Yes         \\        \hline
+ This work &  $5P$  &  $8$ \G1, $10$ \F & $12P$  & No \\     \hline
  \end{tabular}
  \end{table}
  
@@ -587,6 +587,10 @@ and outputs \acc if and only if \[s_D = s_g \cdot Z_H(z) + z \cdot s_f.\]
  
 \end{enumerate}
 
+% 
+% \paragraph{Saving one field element as in \cite{sonic}}
+% Note that $s_W,s_Y,s_Z,s_f$ uniquely deter
+% the value $g(z)$ can be derived from the verifier equation. Thus, instead of \prv sending $g(z)$, \ver can compute the value $s_
 
 \paragraph{Parallel proof generation}
 Parallel proof generation with efficient amortized verification, as mentioned in Section \ref{subsec:sonicmodes}, is achieved by running most steps separately for each public input, but jointly in steps \ref{step:ver1} and \ref{step:ver2}, i.e.\ use the same verifier randomness $r,r',r'',z$ for all proofs. When this is done the values $R(z),R'(z),R''(z),Q(z)$ can be computed just once for all proofs in step \ref{step:ver3}.
@@ -597,8 +601,9 @@ Parallel proof generation with efficient amortized verification, as mentioned in
 As in \cite{sonic}, the heavy/non-succinct part of the verifier computation is evaluating polynomials whose size is as large as the circuit/number of R1CS constraints.
 \sonic has a clever solution for this\footnote{In fact, two different solutions for this and we'll discuss the second in Section \ref{sec:succinctver}.} - using an untrusted helper. The helper computes the polynomial evaluations for the verifier,
 and is able to prove the evaluations are correct. This is what \cite{sonic} call a \emph{signature of correct computation}.
+As we need to use the \sonic helper on several different polynomials in related evaluation points, it will be convenient to use a definition that supports multiple polynomials and evaluation points, at the cost of a more complicated definition of SCC.
 \begin{dfn}\label{dfn:batchsigs}
-  A protocol \prot between two-parties $(\sigprv,\sigver)$ is a  \emph{$(m,d)$-signature of correct computation} ($(m,d)$-SCC) if, when both parties are given $s\in \bivar{d}$ and a sequence of values $S=\sett{(z_j,y_j,s_j)\in \F^3}{j\in [m]}$, \sigver ends up outputting a value $\res\in \set{\acc,\rej}$ such that 
+  A protocol \prot between two-parties $(\sigprv,\sigver)$ is a  \emph{$(t,\sett{m_i}{i\in [t]},d)$-signature of correct computation} ($(t,\sett{m_i}{i\in [t]},d)$-SCC) if, when both parties are given $s_1,\ldots,s_t\in \bivar{d}$ and a sequence of values $S=\sett{(x_{i,j},y_{i,j},s_{i,j})\in \F^3}{i\in [t],j\in [m_i]}$, \sigver ends up outputting a value $\res\in \set{\acc,\rej}$ such that 
 %   
 %   \begin{itemize}
 %    \item Given a bi-variate polynomial $s\in \bivar{d}$ and a sequence , \sigprv generates a proof \prf.
@@ -606,27 +611,33 @@ and is able to prove the evaluations are correct. This is what \cite{sonic} call
 %   \end{itemize}
 % such that
 \begin{enumerate}
- \item \textbf{Completenss:} If for every $j\in [m], s_j = s(z_j,y_j)$,
+ \item \textbf{Completeness:} If for every $i\in [t], j\in [m_i],$ $s_{i,j} = s_i(x_{i,j},y_{i,j})$,
  and $(\sigprv,\sigver)$ follow the protocol then
- $\sigver(s,S,\prf)=\acc$ with probability one.
- \item \textbf{Soundness:} For any efficient generic group adversary \adv playing the part of \sigprv, if for some $j\in [m]$
- $s_j \neq s(z_j,y_j)$, then the probability that
- \[\sigver(s,S,\adv(s,S))=\acc\]
- is \negl.
+ $\sigver$ outputs \acc with probability one.
+ \item \textbf{Soundness:} For any efficient generic group adversary \adv playing the part of \sigprv, if for some $i\in [t], j\in [m_i],$ $s_{i,j} \neq s_i(x_{i,j},y_{i,j})$, then the probability that \sigver outputs \acc is \negl.
 \end{enumerate}
 
 \end{dfn}
 
 
-\cite{sonic} show the following.
+The following lemma follows from \cite{sonic}'s helped-SCC protocol, together with their batched opening commitment scheme as described in Section \ref{sec:kate}.
 \begin{lemma}\label{lem:sonicSCC}
- Fix integers $m,d$.
- There is a pubic coin $(m,d)$-SCC such that,
- when denoting by $m^*$ the number of distinct values amongst $\set{y_1,\ldots,y_m}$ (where $S=\sett{s_j,z_j,y_j}{j\in [m]}$ is the input to the protocol);
+ Fix integers $t,\sett{m_i}{i\in [t]},d$.
+ There is a pubic coin $(t,\sett{m_i}{i\in [t]},d)$-SCC such that the following holds.
+ Let $S=\sett{(x_{i,j},y_{i,j},s_{i,j})\in \F^3}{i\in [t],j\in [m_i]}$ be the common input to \sigprv and \sigver in the beginning of the protocol.
+ 
+ Suppose that 
+ \begin{enumerate}
+ %\item $m= \sum_{i\in [t]} m_i$.
+  \item $m^*$ is the sum over $i\in [t]$ of the number of distinct values in \sett{y_{i,j}}{j\in [m_i]}.
+  \item $m^{**}$ is the number of distinct values in \sett{y_{i,j}}{i\in [t],j \in [m_i]}.
+  \item $m^{***}$ is the number of distinct values in \sett{x_{i,j}}{i\in [t],j \in [m_i]}.
+ \end{enumerate}
+Then
  \begin{itemize}
-  \item the total prover communication in the protocol consists of $2m^* + m+2$ \G1 elements and $m^*+1$ field elements. 
+  \item the total prover communication in the protocol consists of $m^* + m^{**}+m^{***} + t$ \G1 elements and $m^*+t$ field elements. 
   %Sonic write 3m+1 G elems - but seem to forget you need to both open and commit to C
-  \item The verifier computation consists of one evaluation of $S$ and $2m^* +2m+2$ pairings.
+  \item The verifier computation consists of one evaluation of each $s_i$ and $3(m^{**} +m^{***}+t)$ pairings.
 \item The SRS required for the scheme is the same as that of the $d$-polynomial commitment scheme described in Section \ref{sec:kate}.
   \end{itemize}
 
@@ -636,7 +647,7 @@ and is able to prove the evaluations are correct. This is what \cite{sonic} call
 Let us see how Lemma \ref{lem:sonicSCC} helps us improve verifier efficiency in the batch helped model:
 The heavy verifier computations - meaning those linear instead of polylogarithmic in the number of constraints - are the evaluation at the point $z$ of the polynomials $Q,R,R',R''$.
 Recall that $R,R',R''$ were defined by a random choice of $r\in \F$.
-We could in fact think of them all as \emph{bi-variate} polynomials evaluated at $(r,z)$ ($R',R''$ are the same bi-variate polynomial as $R$ when viewed this way); we claim that as bivariate polynomials they are all members of \bivar{n} when viewed this way:
+We could in fact think of them all as \emph{bi-variate} polynomials evaluated at $(r,z)$ ($R',R''$ are the same bi-variate polynomial as $R$ when viewed this way); we claim that as bivariate polynomials they are all members of \bivar{n}:
 Let \sett{L_i \in \F[Y]}{i\in H} be the Lagrange basis with respect to $H$.
 That is, $L_i$ is the unique polynomial of degree less than $n$ with 
 $L(i)=1$ and $L(j)=0$ for $i\neq j \in H$.
@@ -645,17 +656,27 @@ Now, we can see that
 Similarly, $Q$ was defined by a random choice of $r,r',r''\in \F$ and thus can be thought of as a sum of three bivariates $Q_1,Q_2,Q_3$
 with
 \[Q_j(X,Y) = \summ \alpha_{i,j}(X)\cdot L_i(Y)\]
-for some $\alpha_{i,j}(X)\in \polysofdeg{n}$, such that the total number of non-zero coefficients in \set{alpha_{i,j}(X)} is bounded by the number of wires in the circuit we constructed the R1CS from; hence we can assume it is $O(n)$.
+for some $\alpha_{i,j}(X)\in \polysofdeg{n}$, such that the total number of non-zero coefficients in \set{\alpha_{i,j}(X)} is bounded by the number of wires in the circuit we constructed the R1CS from; hence we can assume it is $O(n)$.
 
-What will be important for us is that given $z\in \F$ the values \sett{L_i(z)}{i\in H},
-can be computed in at most $O(n)$ field operations. (As $L_i(Y)=\frac{Y^n-1}{Y-i}\cdot\frac{i-1}{i^n-1}$ )
+What will be important for us is that given $z\in \F$, the values \sett{L_i(z)}{i\in H} can be computed in at most $O(n)$ field operations (As $L_i(Y)=\frac{Y^n-1}{Y-i}\cdot\frac{i-1}{i^n-1}$).
 
-Thus, a helper can use the protocol of Lemma \ref{lem:sonicSCC}, with $s=Q_1,Q_2,Q_3,R$  to compute
-$Q(r,r',r'',z),$ $R(r,z),R(r',z),R(r'',z)$ for \ver and convince him the values are correct. We can leverage the separation between $m$ and $m^*$ in Lemma \ref{lem:sonicSCC} to save some helper elements and pairings per proof, as
-we are evaluating $R$ three times with the same $z$ value in the $Y$ coordinate.
-In total, for a batch of $t$ proofs, the helper mode adds $14t+8$ \G1 elements and $4t+4$ field elements to the proofs,
-and $20t+8$ pairing operations to the verifier.
-But now requiring the verifier to only perform $O(n)$ field operations to compute the polynomials $Q_1,Q_2,Q_3,R$ at a single point, (instead of $O(n\cdot t)$ without the helper).
+Thus, a helper can use the protocol of Lemma \ref{lem:sonicSCC}, with to compute $Q(r,r',r'',z),$ $R(r,z),R(r',z),R(r'',z)$ for \ver and convince him the values are correct.
+% We can leverage the separation between $m$ and $m^*$ in Lemma \ref{lem:sonicSCC} to save some helper elements and pairings per proof, as
+% we are evaluating $R$ three times with the same $z$ value in the $Y$ coordinate.
+
+Mapping our situation to Lemma \ref{lem:sonicSCC}, for one execution of the main protocol we have
+\begin{enumerate}
+ \item $t=4$: Our polynomials are $Q_1,Q_2,Q_3,R$.
+ \item $m^* = 4$: Our second coordinate is always $z$.
+ \item $m^{**} =3$: The options for the first coordinate in all polynomials are $r,r',r''$.
+ \item $m^{***}=1$: Again, cause our second coordinate is always $z$
+\end{enumerate}
+
+On the other hand, when batching arbitrary proofs, there will not be necessarily any overlap between the values of the coordinates of evaluation points.
+It follow from Lemma \ref{lem:sonicSCC} that, for a batch of $T$ proofs, the helper mode adds $8T+4$ \G1 elements and $10T+4$ field elements to the proofs (including a $6T$ factor for the evaluations of $R,Q_1,Q_2,Q_3$ themselves),
+and $12T+12$ pairing operations to the verifier.
+
+This while requiring the verifier to only perform $O(n)$ field operations to compute the polynomials $Q_1,Q_2,Q_3,R$ at a single point, (instead of $O(n\cdot T)$ without the helper).
 
 
 
