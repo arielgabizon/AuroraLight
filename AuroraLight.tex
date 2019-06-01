@@ -437,7 +437,7 @@ such that
   \item \advprime takes the part of \prvpoly in the protocol \open with inputs
   $\cm_1,\ldots,\cm_t,d_1,\ldots,d_t,s_1,\ldots,s_t$.
   \item $(\adv,\advprime)$ wins if 
-  \begin{itemize}
+  \begin{itemize} 
    \item \ver outputs \acc at the end of the protocol.
    \item For some $i\in [t]$, $s_i\neq f_i(z)$ or $\deg(f_i)\geq d_i$.
   \end{itemize}
@@ -476,7 +476,7 @@ Fix any $d$ and assume the $d$-power bi-linear Strong Diffie Hellman assumption 
  Then the above scheme is a $d$-polynomial commitment scheme such that
  \begin{enumerate}
   \item \prvpoly requires \max \G1 exponentiations for computing $\com(f,\max,\srs)$.
-  \item \prvpoly requires $\sum_{i=1}^t O(d_i)$ field operations and  $\sum_{i=1}^t d_i$ exponentiations for computing $\open(\sett{cm_i}{i\in [t]},$ $\sett{d_i}{i\in [t]},\sett{s_i}{i\in [t]},$ $z)$.
+  \item \prvpoly requires $\sum_{i=1}^t O(d_i\log(d_i))$ field operations and  $\sum_{i=1}^t d_i$ exponentiations for computing $\open(\sett{cm_i}{i\in [t]},$ $\sett{d_i}{i\in [t]},\sett{s_i}{i\in [t]},$ $z)$.
 \item \verpoly requires $t^*+2$ pairings, where $t^*$ is the number of distinct values amongst $d_1,\ldots,d_t$.
   \end{enumerate}
 
