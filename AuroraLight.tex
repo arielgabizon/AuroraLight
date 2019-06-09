@@ -485,7 +485,7 @@ Fix any $d$ and assume the $d$-power bi-linear Strong Diffie Hellman assumption 
 
 \section{The main construction}\label{sec:main}
 We begin by converting R1CS to a format that is convenient for us.
-We denote by $n$ the number of private inputs and the number of constraints which we assume our equal (can be achieved by adding dummy variables or constraints if needed).
+We denote by $n$ the number of private inputs and the number of constraints which we assume are equal (can be achieved by adding dummy variables or constraints if needed).
 We denote by $\ell$ the number of public inputs; and define $N\defeq n+\ell$.
 We assume the first $n$ variables correspond to the private inputs.
 
@@ -537,11 +537,11 @@ Rearrange the sum as
 where $\alpha_i$ is a coefficient containing some polynomial expression in $r, r'
 , r'',$  $\set{a_{i,j} , b_{i,j} , c_{i,j}}$; and also
 the public inputs $x_{n+1}, . . . , x_N$ in the case of $\alpha_0$.
-Now compute $R, R', R'', Q \in \polysofdeg{n}$, such that for $i \in [n], R(i) = r^i
+Now compute $R, R', R'', Q \in \polysofdeg{n}$, such that for $i \in H, R(i) = r^i
 , R'(i) = r'^i
 , R''(i) =r''^i
 , Q(i) = \alpha_i.$
-Define the polynomial $D \in \polysofdeg{3n}$.
+Define the polynomial $D \in \polysofdeg{3n}$ by
 
 \[D \defeq R \cdot Y \cdot Z + R'\cdot Y + R''\cdot Z + Q \cdot W + \alpha_0/n.\]
 Our sum above becomes
@@ -578,9 +578,9 @@ For convenience, we summarize the main protocol steps deferring to the more deta
  \item\label{step:ver1} \ver chooses random $r,r',r''\in \F$ and sends them to \prv. They both derive the polynomials $R,R',R''$.
  \item \prv computes $D$. \prv computes $f\in \polysofdeg{n-1},g\in \polysofdeg{2n}$ such that $D(X)=g(X)\cdot Z_H(X) + X\cdot f(X)$.
  \item \prv sends $\cm(g,2n,\srs), \cm(f,n-1,\srs)$ to \ver.
- \item\label{step:ver2} \ver sends chooses random $z\in \F$ and sends $z$ to \prv.
+ \item\label{step:ver2} \ver chooses random $z\in \F$ and sends $z$ to \prv.
  \item \prv sends $s_W = W(z),s_Y= Y(z),s_Z = Z(z),s_f = f(z),s_g = g(z)$ to \ver.
- \item  \prv and \ver engage in the protocol $\open(5,\set{n,n,n,n-1,2n},\set{W,Y,Z,f,g},\set{s_W,s_Y,s_Z,s_f,s_g})$. \ver outputs \rej if the protocol verifier did.
+ \item\label{step:veropen}  \prv and \ver engage in the protocol $\open(5,\set{n,n,n,n-1,2n},\set{W,Y,Z,f,g},\set{s_W,s_Y,s_Z,s_f,s_g})$. \ver outputs \rej if the protocol verifier did.
  \item\label{step:ver3} \ver computes the alleged value of $D(z)$, as 
  \[s_D\defeq R(z)s_Y s_Z + R'(z)s_Y+ R''(z)s_Z+ Q(z)s_W + \alpha_0  \]
 and outputs \acc if and only if \[s_D = s_g \cdot Z_H(z) + z \cdot s_f.\]
@@ -595,7 +595,10 @@ and outputs \acc if and only if \[s_D = s_g \cdot Z_H(z) + z \cdot s_f.\]
 \paragraph{Parallel proof generation}
 Parallel proof generation with efficient amortized verification, as mentioned in Section \ref{subsec:sonicmodes}, is achieved by running most steps separately for each public input, but jointly in steps \ref{step:ver1} and \ref{step:ver2}, i.e.\ use the same verifier randomness $r,r',r'',z$ for all proofs. When this is done the values $R(z),R'(z),R''(z),Q(z)$ can be computed just once for all proofs in step \ref{step:ver3}.
 
-
+\paragraph{Saving one field element as in \sonic}
+Note that in the equation checked by \ver in step \ref{step:ver3}, when $z\neq 0$, the value $s_f$ that will cause acceptance is uniquely determined by the other four values $s_W,s_Y,s_Z,s_g$.
+Thus \ver can compute it himself as \[s_f\defeq \left(s_D - s_g \cdot Z_H(z)\right)/z,\]
+and check its correctness in the protocol \open of step \ref{step:veropen}. 
 
 \section{Batching arbitrary proofs with the Sonic helper}\label{sec:helpedver}
 As in \cite{sonic}, the heavy/non-succinct part of the verifier computation is evaluating polynomials whose size is as large as the circuit/number of R1CS constraints.
