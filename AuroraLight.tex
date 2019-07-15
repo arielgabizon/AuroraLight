@@ -311,7 +311,7 @@ of having the polynomials ultimately plugged in to the \cite{kate} scheme  have 
 \paragraph{The Aurora approach}
 Instead, we use a nice algebraic trick from the \aurora IOP\cite{aurora}. \cite{aurora} uses a lemma (Lemma \ref{lem:sumcoeff})
 connecting between the value of a polynomial's constant coefficient, and its sum on a multiplicative subgroup. Together with a randomized sum check arithmetization in the style of \cite{BCGRS,aurora}, this allows us to create a ``constant coefficient=0 iff prover has witness'' situation without using negative powers.
-This enables only dealing with (regular not Laurent) polynomials of degree at most $2n$; i.e.\ we have reduced the ``monomial range'' of \sonic from $7n$ to $2n$, and do not need to deal with a ``hole'' in this range disallowing a constant coefficient. Morever, all but one of the prover polynomials will have  degree at most $n$, which further helps reduce prover run time. On the other hand, we have five polynomials to deal with rather than two as in \cite{sonic}, which is why our proofs are longer than \sonic's.
+This enables only dealing with (regular not Laurent) polynomials of degree at most $2n$; i.e.\ we have reduced the ``monomial range'' of \sonic from $7n$ to $2n$, and do not need to deal with a ``hole'' in this range disallowing a constant coefficient. Moreover, all but one of the prover polynomials will have  degree at most $n$, which further helps reduce prover run time. On the other hand, we have five polynomials to deal with rather than two as in \cite{sonic}, which is why our proofs are longer than \sonic's.
 
 
 Before comparing performance with \cite{sonic} in more detail, we discuss the three settings in which both our construction and \sonic can be used.
@@ -322,7 +322,7 @@ The evaluation of $s$ in \sonic is done once per proof, at a point $(z,y)$ chose
 There are three ways to deal with this evaluation.
 \paragraph{Parallel proof generation for a batch:}
 The crucial point is that the values $z,y$ are only revealed to the prover at certain points in the protocol; but beyond this, there is no dependence between the values $z,y$ and the specific statement proven - they just need to be uniform.
-It follows that if proofs are generated in parallel, e.g.\ in practice by posting the first part of all proofs on a blockchain and getting the random challenge $z$ afterwords and continuing similarly for $y$ - then the verifier can use the same $(z,y)$ for a whole batch of proofs and do the non-succinct $s$ evaluation only once per batch.\footnote{\cite{sonic} do not explicity discuss this mode, but we think it may be the most practical both for their construction and ours.}
+It follows that if proofs are generated in parallel, e.g.\ in practice by posting the first part of all proofs on a blockchain and getting the random challenge $z$ afterwords and continuing similarly for $y$ - then the verifier can use the same $(z,y)$ for a whole batch of proofs and do the non-succinct $s$ evaluation only once per batch.\footnote{\cite{sonic} do not explicitly discuss this mode, but we think it may be the most practical both for their construction and ours.}
 Our construction also has the property that the non-succinct verifier computations can be done only once per batch.
 \ariel{compute exact cost of computing $Q$}
 
@@ -449,7 +449,7 @@ such that
 We describe the following scheme based on \cite{kate,sonic}.
 It is in fact a slightly simpler scheme than in \cite{sonic} because, as explained in the introduction, there is no need to deal with holes in the allowed range of degrees.
 \begin{enumerate}
- \item $\gen(d)$ - choose uniform $x\in \F$. Output $\srs =(\enc1{1},\enc1{x},\ldots,\enc1{x^{d-1}},\enc2{1},\enc2{x^{-1}},\ldots,\enc2{x^{-(d-1)}})$.
+ \item $\gen(d)$ - choose uniform $x\in \F$. Output $\srs =(\enc1{1},\enc1{x},\ldots,\enc1{x^{d-1}},\enc2{x},\enc2{1},\enc2{x^{-1}},\ldots,\enc2{x^{-(d-1)}})$.
  \item $\com(f,d',\srs) \defeq \enc1{x^{d-d'}\cdot f(x)}$.
  \item $\open(\set{cm_i},\set{d_i},\set{s_i},z)$
  \begin{enumerate}
@@ -506,7 +506,7 @@ For all $i\in [n]$
 \end{enumerate}
 Note that above $y_i, z_i\in\F$ but $a_i,b_i,c_i,x \in\F^N$.
 Similarly to the original system, we call
-$x_n+1, . . . , x_N$ the public variables of this system, and all other variables private variables.
+$x_{n+1}, . . . , x_N$ the public variables of this system, and all other variables private variables.
 % When we say in the protocol description that the prover commits to a polynomial in \polyofdeg{d} for some $d$, we mean in particular there is an independently generated Kate SRS for that $d$. We will
 % end up needing three of these for d = 2n, d = n, d = n − 1.
 
