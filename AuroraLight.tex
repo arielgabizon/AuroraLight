@@ -429,14 +429,14 @@ such that
  such that $\deg(f_i)<d_i$.
  Suppose that for each $i\in [t]$, $\cm_i = \com(f_i,d_i,\srs)$.  Then if \open is run correctly with values
  $t,z, \sett{\cm_i,d_i,f_i(z)}{i\in [t]}$, \verpoly outputs \acc with probability one.
- \item \textbf{Knowledge soundness in the generic group model:} There exists an efficient \ext such that for any efficient generic group model adversary \adv and arbitrary efficient \advprime, the probability of $(\adv,\advprime)$ winning the following game is \negl over the randomness of $(\adv,\advprime)$ and \gen.
+ \item \textbf{Knowledge soundness in the generic group model:} There exists an efficient \ext such that for any efficient generic group model adversary \adv the probability of $\adv$ winning the following game is \negl over the randomness of \adv and \gen.
  \begin{enumerate}
   \item Given \srs, \adv outputs $t,\cm_1,\ldots,\cm_t$.
   \item \ext, given access to the state of \adv outputs $f_1,\ldots,f_t \in \polysofdeg{d}$.
-  \item \advprime outputs $0< d_1,\ldots,d_t \leq d$, $s_1,\ldots,s_t \in \F,z \in \F$.
-  \item \advprime takes the part of \prvpoly in the protocol \open with inputs
+  \item \adv outputs $0< d_1,\ldots,d_t \leq d$, $s_1,\ldots,s_t \in \F,z \in \F$.
+  \item \adv takes the part of \prvpoly in the protocol \open with inputs
   $\cm_1,\ldots,\cm_t,d_1,\ldots,d_t,s_1,\ldots,s_t$.
-  \item $(\adv,\advprime)$ wins if 
+  \item $\adv$ wins if 
   \begin{itemize} 
    \item \ver outputs \acc at the end of the protocol.
    \item For some $i\in [t]$, $s_i\neq f_i(z)$ or $\deg(f_i)\geq d_i$.
